@@ -10,9 +10,8 @@
 #include <new>
 
 
-QString path1 = "surface_datasets/BruMi-20210531-083409_clean.csv";                          // two columns
-QString path2 = "surface_datasets/2021_11_30_Sarah_RespSignal_20211130_171956_clean.csv";    // three columns
-QString path3 = "surface_datasets/HaGer-202104022_162059-Leber_clean.csv";
+QString path1 = "dataset1.csv";                          // two columns
+QString path2 = "dataset2.csv";                         // three columns
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)

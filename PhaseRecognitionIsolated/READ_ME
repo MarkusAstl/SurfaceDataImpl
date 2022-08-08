@@ -1,1 +1,6 @@
+Required folders for running:
+armadillo-10.2.0
+Surface Data
+
+Move both folders into same folder as mainwindow.cpp
 

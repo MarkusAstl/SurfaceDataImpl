@@ -95,66 +95,155 @@ void meanfilter(const QList<double>* signal, QList<double>* result, int N, int s
    }
 }
 
-void find_extrema(arma::vec data_list, double brth_cyc_dur, double dt_intp, double interval_factor,
-                  std::vector<int>* max_ind_list, std::vector<int>* min_ind_list){
-    // finds all extrema in data_list except the last one
-    double brth_cyc_ind_dur = brth_cyc_dur/dt_intp;                 // Estimated breath cycle duration in indices
-    int interval_size = round(brth_cyc_ind_dur*interval_factor);    // index interval size for extremum search
-    int start_ind = 0;
+void find_first_max_ind(arma::vec* a1, std::vector<int>* max_ind_list, std::vector<int>* min_ind_list) {
+    bool search_max = true;
+    bool monotonicity_found = false;
+    int m = 2;
+    int start_ind;
 
-    while (start_ind <= data_list.size()-1){
-        int end_ind = start_ind + interval_size;
-        if(end_ind > data_list.size()-1){
+    while (!monotonicity_found){
+        if (m >= a1->size()-1){
+            qDebug() << "Error in find_first_max_ind function";
+        }
+        else if(a1->at(m-2) < a1->at(m-3) && a1->at(m-1) < a1->at(m-2) && a1->at(m-1) < a1->at(m)){
+            search_max = true;
+            monotonicity_found = true;
+            start_ind = m-2;
+        }
+        else if(a1->at(m-2) > a1->at(m-3) && a1->at(m-1) > a1->at(m-2) && a1->at(m-1) > a1->at(m)){
+            search_max = false;
+            monotonicity_found = true;
+            start_ind = m-2;
+        }
+        ++ m;
+    }
+
+    int max_ind;
+    int min_ind;
+
+    for (int q = start_ind; q < a1->size() ; ++q){
+        if(search_max && a1->at(q-2) < a1->at(q-3)){
+            if(a1->at(q-1) < a1->at(q-2) && a1->at(q) < a1->at(q-1)){
+                max_ind = q-3;
+                max_ind_list->push_back(max_ind);
+                search_max = false;
+            }
+        }
+
+        else if (max_ind_list->size() >= 2){
             break;
         }
-        arma::vec relevant_interval = data_list.subvec(start_ind, end_ind);
-        int interv_loc_max_ind = relevant_interval.index_max();
-        int loc_max_ind = start_ind + interv_loc_max_ind;
-        max_ind_list->push_back(loc_max_ind);
-        start_ind = loc_max_ind;
 
-        end_ind = start_ind + interval_size;
-        if(end_ind > data_list.size()-1){
-            break;
+        else if(!search_max && a1->at(q-2) > a1->at(q-3)){
+            if(a1->at(q-1) > a1->at(q-2) && a1->at(q) > a1->at(q-1)){
+                min_ind = q-3;
+                min_ind_list->push_back(min_ind);
+                search_max = true;
+            }
         }
-        relevant_interval = data_list.subvec(start_ind, end_ind);
-        int interv_loc_min_ind = relevant_interval.index_min();
-        int loc_min_ind = start_ind + interv_loc_min_ind;
-        min_ind_list->push_back(loc_min_ind);
-        start_ind = loc_min_ind;
     }
 }
 
-void check_last_extremum(int max_ind_list_size, int min_ind_list_size, bool* ends_with_min){
+
+void find_extrema(arma::vec data_list, arma::vec time_list, int brth_cyc_ind_dur, double interval_factor,
+                  std::vector<int>* max_ind_list, std::vector<int>* min_ind_list, int start_ind){
+    // finds all extrema in data_list except the last one
+
+    int interval_size = round(brth_cyc_ind_dur*interval_factor);    // index interval size for extremum search
+    int end_ind;
+    int cycle_num = 0;
+    int num_of_max;
+    arma::vec relevant_interval;
+    int interv_loc_max_ind;
+    int loc_max_ind;
+    int interv_loc_min_ind;
+    int loc_min_ind;
+
+    while (start_ind <= data_list.size()-1){
+        end_ind = start_ind + interval_size;
+
+        if(end_ind > data_list.size()-1){
+            end_ind = data_list.size()-1;
+        }
+
+        relevant_interval = data_list.subvec(start_ind, end_ind);
+        interv_loc_max_ind = relevant_interval.index_max();
+        loc_max_ind = start_ind + interv_loc_max_ind;
+        qDebug() << "Number of max: " << max_ind_list->size();
+
+        if(loc_max_ind == end_ind){
+            qDebug() << "Break at loc_max_ind in function find_extrema";
+            qDebug() << "Breaking Max index: " << loc_max_ind << "  Breaking Max time: " << time_list[loc_max_ind];
+            max_ind_list->push_back(loc_max_ind);
+            //break;         // If extremum is last element of data_list it will not be considered as extremum
+        }
+        else{
+            max_ind_list->push_back(loc_max_ind);
+        }
+
+        start_ind = loc_max_ind;
+        end_ind = start_ind + interval_size;
+
+        if(end_ind > data_list.size()-1){
+            end_ind = data_list.size()-1;
+        }
+
+        relevant_interval = data_list.subvec(start_ind, end_ind);
+        interv_loc_min_ind = relevant_interval.index_min();
+        loc_min_ind = start_ind + interv_loc_min_ind;
+
+        if(loc_min_ind == end_ind){
+            qDebug() << "Break at loc_min_ind in function find_extrema";
+            qDebug() << "Breaking Min index: " << loc_min_ind << "  Breaking Min time: " << time_list[loc_min_ind];
+            break;
+        }
+        else{
+            min_ind_list->push_back(loc_min_ind);
+        }
+
+        start_ind = loc_min_ind;
+
+        num_of_max = max_ind_list->size();
+        if(num_of_max >= 2){
+            interval_size = round((max_ind_list->at(num_of_max-1) - max_ind_list->at(num_of_max-2)) * interval_factor);
+        }
+
+        ++cycle_num;
+    }
+}
+
+void check_last_extremum(int last_max_ind, int last_min_ind, bool* ends_with_min){
     // Determines if last extremum is a minimum
 
     QErrorMessage lastExtrError;
 
-    if (max_ind_list_size == min_ind_list_size){ // Extremum search always starts with a max
+    if (last_max_ind < last_min_ind){
         *ends_with_min = true;
     }
-    else if (max_ind_list_size > min_ind_list_size){
+    else if (last_max_ind > last_min_ind){
         *ends_with_min = false;
     }
     else
-//        qDebug() << "Else";
-        lastExtrError.showMessage("Error in function check_last_extremum: Number of minimum indices is too high. "
-                                  "Size of min_ind_list must be smaller or equal to size of max_ind_list");
+        lastExtrError.showMessage("Error in function check_last_extremum: Index of last min = Index of last max");
+
 }
 
 
 void MainWindow::on_Button_clicked()
 {
     // Define parameters
-    double start_factor = 0.5;      // Cut dataset to start at this percentage
-    double end_factor = 0.83;       // Cut dataset to end at this percentage
-    int smthMeanWindow = 7;          // Window size for smoothing avergage filter
-    double brth_cyc_dur = 2.42;     // Estimated breath cycle duration in seconds   -> 12 Hz? nur für Erwachsene
-    double interval_factor = 1.2;   // Adjusts estimated breath cycle duration interval
+    double start_factor = 0.77;      // Cut dataset to start at this percentage
+    double end_factor = 0.999;       // Cut dataset to end at this percentage
+    int smthMeanWindow = 9;          // Window size for smoothing avergage filter
+//    double brth_cyc_dur = 2.42;     // Estimated breath cycle duration in seconds   -> 12 Hz? nur für Erwachsene
+    double interval_factor = 1.0;   // Adjusts estimated breath cycle duration interval
                                     //   for search interval of next extremum
+    double first_interv_factor = 0.3;  // percentage of dataset for searching first two max extrema
     int cycles_for_avg = 1;         // Number of last breath cycles considered for
                                     //   calculation of average breath amplitude range
     int intp_factor = 2;            // New amount of datapoints = old amount of datapoints * intp_factor
+//    double f_MaxRange = 0.5;        // Max frequency to be considered at FFT
+//    double f_MinRange = 0.2;       // Min frequency to be considered at FFT
 
 
     //--------------------------------------------------------------------------
@@ -243,30 +332,85 @@ void MainWindow::on_Button_clicked()
     arma::vec a1_intp;
     arma::interp1(t_vec, a1_vec, t_intp, a1_intp);
 
-    // Find extrema
-    double dt_intp = t_intp[2] - t_intp[1];
+//    // Fast Fourier Transformation
+//    int fft_N = 1024;                // number of frequencies to be tested in FFT
+//    double dt_intp = t_intp[2] - t_intp[1];
+//    double f_sample = 1 / dt_intp;
+
+//    arma::vec fft_a1_vec = a1_vec.subvec(0, round(a1_vec.size()*0.1));
+//    arma::cx_vec fft_vec = fft(fft_a1_vec, fft_N);
+
+//    QVector<double> f_FFT(fft_vec.size());
+//    QVector<double> m_FFT(fft_vec.size());
+
+//    int f_ind = round(f_MinRange * fft_N / f_sample);       // k = f * fft_N / f_sample
+//    double frequency = 0.0;
+
+//    while(frequency < f_MaxRange){
+//        frequency = f_ind * f_sample / fft_N;               // f = k * f_sample / fft_N
+//        f_FFT[f_ind] = frequency;
+//        m_FFT[f_ind] = sqrt(real(fft_vec[f_ind])*real(fft_vec[f_ind])+imag(fft_vec[f_ind])*imag(fft_vec[f_ind]));
+//        std::cout << "f = " << frequency << "   ->   " << "Magnitude = "
+//                  << sqrt(real(fft_vec[f_ind])*real(fft_vec[f_ind])+imag(fft_vec[f_ind])*imag(fft_vec[f_ind])) << std::endl;
+//        ++f_ind;
+//    }
+
+//    int fMax_FFT_ind = std::max_element(m_FFT.begin(), m_FFT.end()) - m_FFT.begin();
+//    double fMax_FFT = f_FFT[fMax_FFT_ind];
+//    double mMax_FFT = m_FFT[fMax_FFT_ind];
+
+    // Find beginning frequency
+    arma::vec beg_a1_vec = a1_intp.subvec(0, round(a1_vec.size()*first_interv_factor));
     std::vector<int> max_ind_list;
     std::vector<int> min_ind_list;
-    find_extrema(a1_intp, brth_cyc_dur, dt_intp, interval_factor, &max_ind_list, &min_ind_list);
+    find_first_max_ind(&beg_a1_vec, &max_ind_list, &min_ind_list);
+    qDebug() << "-----find_first_max_ind function: ";
+    qDebug() << "Number of found maxima: " << max_ind_list.size();
+    qDebug() << "Index of last max: " << max_ind_list.back();
+    double dt_intp = t_intp[2] - t_intp[1];
+    int brth_cyc_ind_dur = max_ind_list[1] - max_ind_list[0];
+    double brth_cyc_dur = dt_intp * (max_ind_list[1] - max_ind_list[0]);
+    qDebug() << "Calculated duration of first breath cycle = " << brth_cyc_dur << " s";
+    qDebug() << "";
+
+    // Make copy of first maxima for plotting
+    std::vector<int> start_max_ind_list = max_ind_list;
+
+    // Find extrema
+
+    //double brth_cyc_dur = 1.0/fMax_FFT;
+    //double brth_cyc_dur = 2.42;
+
+    find_extrema(a1_intp, t_intp, brth_cyc_ind_dur, interval_factor, &max_ind_list, &min_ind_list, max_ind_list.back());
+    qDebug() << "-----find_extrema function:";
+    qDebug() << "Number of maxima: " << max_ind_list.size();
+    qDebug() << "Number of minima: " << min_ind_list.size();
 
     // Find last extremum
+    int last_max_ind = max_ind_list.back();
+    int last_min_ind = min_ind_list.back();
+    qDebug() << "Index of last max: " << last_max_ind;
+    qDebug() << "Index of last min: " << last_min_ind;
+
+//    check_last_extremum(last_max_ind, last_min_ind, &ends_with_min);
+//    qDebug() << "max_ind_list.back()" << t_intp[max_ind_list.back()];
+
+//    if (ends_with_min == true) {
+//        arma::vec a1_maxSubvec = a1_intp.subvec(min_ind_list.back(), a1_intp.size()-1);
+//        int last_interv_max_ind = a1_maxSubvec.index_max();
+//        qDebug() << "Max: " << a1_maxSubvec[last_interv_max_ind];
+//        int last_max_ind = min_ind_list.back() + last_interv_max_ind - 1;
+//        max_ind_list.push_back(last_max_ind);
+//    }
+//    else {
+//        arma::vec a1_minSubvec = a1_intp.subvec(max_ind_list.back(), a1_intp.size()-1);
+//        int last_interv_min_ind = a1_minSubvec.index_min();
+//        int last_min_ind = max_ind_list.back() + last_interv_min_ind - 1;
+//        min_ind_list.push_back(last_min_ind);
+//    }
+
     bool ends_with_min;
-    check_last_extremum(max_ind_list.size(), min_ind_list.size(), &ends_with_min);
-
-    if (ends_with_min == true) {
-        arma::vec a1_maxSubvec = a1_intp.subvec(min_ind_list.back(), a1_intp.size()-1);
-        int last_interv_max_ind = a1_maxSubvec.index_max();
-        int last_max_ind = min_ind_list.back() + last_interv_max_ind - 1;
-        max_ind_list.push_back(last_max_ind);
-    }
-    else {
-        arma::vec a1_minSubvec = a1_intp.subvec(max_ind_list.back(), a1_intp.size()-1);
-        int last_interv_min_ind = a1_minSubvec.index_min();
-        int last_min_ind = max_ind_list.back() + last_interv_min_ind - 1;
-        min_ind_list.push_back(last_min_ind);
-    }
-
-    check_last_extremum(max_ind_list.size(), min_ind_list.size(), &ends_with_min);
+    check_last_extremum(last_max_ind, last_min_ind, &ends_with_min);
 
     arma::vec half_cycle_data;
     int half_cycle_start_ind;
@@ -382,6 +526,21 @@ void MainWindow::on_Button_clicked()
     IntpDataChart->addGraph();
     IntpDataChart->graph(0)->setPen(PRPen);
 
+//    // Create QCustomPlot for FFT data
+//    FFTChart = new QCustomPlot();
+////    QCPBars *freqs = new QCPBars(FFTChart->xAxis, FFTChart->yAxis);
+////    freqs->setName("frequencies");
+////    //freqs->setPen(QPen(QColor(111, 9, 176).lighter(170)));
+////    //freqs->setBrush(QColor(111, 9, 176));
+//    FFTChart->setFixedSize(700,210);
+//    QCPTextElement *FFTTitle = new QCPTextElement(FFTChart);
+//    FFTTitle->setText("Frequency Sprectrum");
+//    FFTTitle->setFont(QFont("sans", 10, QFont::Bold));
+//    FFTChart->plotLayout()->insertRow(0); // insert an empty row above the axis rect
+//    FFTChart->plotLayout()->addElement(0, 0, FFTTitle); // place the title in the empty cell
+//    FFTChart->addGraph();
+//    FFTChart->graph(0)->setPen(PRPen);
+
     // Create QCustomPlot for phase recognition
     PhaseRecogChart = new QCustomPlot();
     PhaseRecogChart->setFixedSize(700,210);
@@ -409,6 +568,10 @@ void MainWindow::on_Button_clicked()
         a1Vec[d] = a1_intp[d];
     }
     IntpDataChart->graph(0)->setData(tVec, a1Vec);
+
+//    FFTChart->graph(0)->setData(f_FFT, m_FFT);
+//    FFTChart->graph(0)->setLineStyle(QCPGraph::lsNone);
+//    FFTChart->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
 
     QVector<double> tVecPR = tVec.mid(min_ind_list[min_ind_list.size()-2], -1);
     QVector<double> a1VecPR = a1Vec.mid(min_ind_list[min_ind_list.size()-2], -1);
@@ -439,6 +602,18 @@ void MainWindow::on_Button_clicked()
     }
     IntpDataChart->graph(2)->setData(tMaxVec, a1MaxVec);
 
+    IntpDataChart->addGraph();
+    IntpDataChart->graph(3)->setPen(QPen(Qt::black));
+    IntpDataChart->graph(3)->setLineStyle(QCPGraph::lsNone);
+    IntpDataChart->graph(3)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 8));
+    QVector<double> tStartMaxVec(start_max_ind_list.size());
+    QVector<double> a1StartMaxVec(start_max_ind_list.size());
+    for(int a = 0; a<start_max_ind_list.size(); ++a){
+        tStartMaxVec[a] = t_intp[start_max_ind_list[a]];
+        a1StartMaxVec[a] = a1_intp[start_max_ind_list[a]];
+    }
+    IntpDataChart->graph(3)->setData(tStartMaxVec, a1StartMaxVec);
+
     // Define position parameters for layout
     double a1_Min = *std::min_element(a1VecRaw.begin(), a1VecRaw.end());
     double a1_Max = *std::max_element(a1VecRaw.begin(), a1VecRaw.end());
@@ -446,6 +621,9 @@ void MainWindow::on_Button_clicked()
 
     double a1PR_Min = *std::min_element(a1VecPR.begin(), a1VecPR.end());
     double a1PR_Max = *std::max_element(a1VecPR.begin(), a1VecPR.end());
+
+//    double m_Min = *std::min_element(m_FFT.begin(), m_FFT.end());
+//    double m_Max = *std::max_element(m_FFT.begin(), m_FFT.end());
 
     // Add vertical line and phase number
     QPen borderPen(Qt::black, 3, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
@@ -489,6 +667,14 @@ void MainWindow::on_Button_clicked()
     IntpDataChart->yAxis->setLabelFont(QFont("sans",8, QFont::Bold));
     IntpDataChart->replot();
 
+//    FFTChart->xAxis->setLabel("f [Hz]");
+//    FFTChart->yAxis->setLabel("Magn. [1]");
+//    FFTChart->xAxis->setRange(f_MinRange, f_MaxRange);
+//    FFTChart->xAxis->setLabelFont(QFont("sans",8, QFont::Bold));
+//    FFTChart->yAxis->setRange(0, mMax_FFT*1.1);
+//    FFTChart->yAxis->setLabelFont(QFont("sans",8, QFont::Bold));
+//    FFTChart->replot();
+
     PhaseRecogChart->xAxis->setLabel("t [s]");
     PhaseRecogChart->yAxis->setLabel("Amp. [mm]");
     PhaseRecogChart->xAxis->setRange(tVecPR[0], tVecPR.back()+(tVecPR.back()-tVecPR[0])*0.05);
@@ -501,9 +687,10 @@ void MainWindow::on_Button_clicked()
     // Set layout
     chartDialog->setLayout(new QVBoxLayout());
     chartDialog->layout()->addWidget(RawDataChart);
-    chartDialog->layout()->addWidget(SmthDataChart);
+    //chartDialog->layout()->addWidget(SmthDataChart);
     chartDialog->layout()->addWidget(IntpDataChart);
+    //chartDialog->layout()->addWidget(FFTChart);
     chartDialog->layout()->addWidget(PhaseRecogChart);
-    chartDialog->resize(700, 800);
+    chartDialog->resize(700, 900);
     chartDialog->show();
 }

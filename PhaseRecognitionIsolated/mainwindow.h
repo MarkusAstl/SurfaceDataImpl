@@ -20,6 +20,7 @@ public:
     ~MainWindow();
 
     QCustomPlot *IntpDataChart;
+    QCustomPlot *FFTChart;
     QCustomPlot *RawDataChart;
     QCustomPlot *SmthDataChart;
     QCustomPlot *PhaseRecogChart;

@@ -73,6 +73,7 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
     return true;
 }
 
+
 void meanfilter(const QList<double>* signal, QList<double>* result, int N, int smthMeanWindow)
 {
    QList<double> signalList = * signal;
@@ -95,36 +96,197 @@ void meanfilter(const QList<double>* signal, QList<double>* result, int N, int s
    }
 }
 
+void extremum_search(arma::vec* data, std::vector<int>* max_ind_list, std::vector<int>* min_ind_list,
+                     int start_ind, bool search_max, int max_num_of_extr, bool* no_extr_left){
+
+    bool is_max;
+    bool is_min;
+    int search_range = 20;
+    int q = start_ind + search_range;
+    int q_max;
+    int q_min;
+    double a1_diff;
+    double a1_min_diff = 0.6;
+    bool skip;
+    int num_of_extr = 0;
+
+    while(q <= data->size()-1){
+        if(search_max){
+
+            q_max = q - search_range;
+            skip = false;
+            is_max = false;
+            if(data->at(q_max) > data->at(q)){
+                for(int dq = 1; dq < search_range; ++dq){
+
+                    if(data->at(q_max) > data->at(q-dq)){
+
+                        a1_diff = abs(data->at(q_max) - data->at(q-dq));
+                        if(a1_diff >= a1_min_diff){
+                            is_max = true;
+                        }
+                    }
+                    else{
+                        is_max = false;
+                        ++q;
+                        skip = true;
+                        break;
+                    }
+                }
+
+                while(!skip && !is_max && q < data->size()-1){
+                    ++q;
+
+                    if(data->at(q_max) > data->at(q)){
+                        a1_diff = abs(data->at(q_max) - data->at(q));
+
+                        if(a1_diff >= a1_min_diff){
+                            is_max = true;
+                        }
+                    }
+                    else {
+                        q = q + search_range;
+                        break;
+                    }
+                }
+
+                if(is_max){
+                    max_ind_list->push_back(q_max);
+                    ++ num_of_extr;
+
+                    if(num_of_extr == max_num_of_extr){
+                        break;
+                    }
+
+                    is_max = false;
+                    search_max = false;
+                    ++q;
+                }
+            }
+
+            else{
+                ++q;
+                //continue;
+            }
+        }
+
+        if(!search_max){
+
+            q_min = q - search_range;
+            skip = false;
+            is_min = false;
+            if(data->at(q_min) < data->at(q)){
+
+                for(int dq = 1; dq < search_range; ++dq){
+
+                    if(data->at(q_min) < data->at(q-dq)){
+
+                        a1_diff = abs(data->at(q_min) - data->at(q-dq));
+                        if(a1_diff >= a1_min_diff){
+                            is_min = true;
+                        }
+                    }
+                    else{
+                        is_min = false;
+                        ++q;
+                        skip = true;
+                        break;
+                    }
+                }
+
+                while(!skip && !is_min && q < data->size()-1){
+                    ++q;
+
+                    if(data->at(q_min) < data->at(q)){
+                        a1_diff = abs(data->at(q_min) - data->at(q));
+
+                        if(a1_diff >= a1_min_diff){
+                            is_min = true;
+                        }
+                    }
+                    else {
+                        q = q + search_range;
+                        break;
+                    }
+                }
+
+                if(is_min){
+                    min_ind_list->push_back(q_min);
+                    ++ num_of_extr;
+
+                    if(num_of_extr == max_num_of_extr){
+                        break;
+                    }
+
+                    is_min = false;
+                    search_max = true;
+                    ++q;
+                }
+            }
+
+            else{
+                ++q;
+                //continue;
+            }
+        }
+    }
+
+    if(num_of_extr < max_num_of_extr){
+        *no_extr_left = true;
+    }
+}
+
+
 void monotonocity_extr_search(arma::vec* data, std::vector<int>* max_ind_list, std::vector<int>* min_ind_list,
-                              int start_ind, bool search_max, int max_num_of_extr){
+                              int start_ind, bool search_max, int max_num_of_extr, bool* no_extr_left){
 
     int num_of_extr = 0;
-    int mono_range = 15;
-    int mono_step = round(mono_range/3);
+    int mono_range = 20;    // What if dataset size is < mono_range?
+    bool is_min;
+    bool is_max;
 
     for (int q = start_ind + mono_range; q < data->size() ; ++q){
-        if(search_max && data->at(q-2*mono_step) < data->at(q-mono_range)){
-            if(data->at(q-mono_step) < data->at(q-mono_range) && data->at(q) < data->at(q-mono_range)){
+        if(search_max){
+            is_max = true;
+            for (int dq = 0; dq < mono_range; ++dq){
+                if (data->at(q-mono_range) <= data->at(q-dq)){
+                        is_max = false;
+                        break;
+                }
+            }
+            if(is_max){
                 max_ind_list->push_back(q-mono_range);
                 ++num_of_extr;
-                search_max = false;
                 if (num_of_extr == max_num_of_extr){
                     break;
                 }
+                search_max = false;
             }
         }
 
-        else if(!search_max && data->at(q-2*mono_step) > data->at(q-mono_range)){
-            if(data->at(q-mono_step) > data->at(q-mono_range) && data->at(q) > data->at(q-mono_range)){
+        else {
+            is_min = true;
+            for (int dq = 0; dq < mono_range; ++dq){
+                if (data->at(q-mono_range) >= data->at(q-dq)){
+                        is_min = false;
+                        break;
+                }
+            }
+            if(is_min){
                 min_ind_list->push_back(q-mono_range);
-                qDebug() << data->at(q-mono_range) << data->at(q-2*mono_step) << data->at(q-mono_step);
-                search_max = true;
                 ++num_of_extr;
                 if (num_of_extr == max_num_of_extr){
                     break;
                 }
+                search_max = true;
             }
         }
+        if (num_of_extr == max_num_of_extr){
+            break;
+        }
+    }
+    if (num_of_extr == 0){
+        *no_extr_left = true;
     }
 }
 
@@ -133,6 +295,8 @@ void find_first_max_ind(arma::vec* a1, std::vector<int>* max_ind_list, std::vect
     bool monotonicity_found = false;
     int m = 3;
     int start_ind;
+    int first_extr_num;
+    bool* no_extr_left;
 
     while (!monotonicity_found){
         if (m >= a1->size()-1){
@@ -140,18 +304,20 @@ void find_first_max_ind(arma::vec* a1, std::vector<int>* max_ind_list, std::vect
         }
         else if(a1->at(m-2) < a1->at(m-3) && a1->at(m-1) < a1->at(m-2) && a1->at(m) < a1->at(m-1)){
             search_max = false;
+            first_extr_num = 5;
             monotonicity_found = true;
             start_ind = m-3;
         }
         else if(a1->at(m-2) > a1->at(m-3) && a1->at(m-1) > a1->at(m-2) && a1->at(m) > a1->at(m-1)){
             search_max = true;
+            first_extr_num = 4;
             monotonicity_found = true;
             start_ind = m-3;
         }
         ++ m;
     }
 
-    monotonocity_extr_search(a1, max_ind_list, min_ind_list, start_ind, search_max, 4);
+    extremum_search(a1, max_ind_list, min_ind_list, start_ind, search_max, first_extr_num, no_extr_left);
 }
 
 
@@ -169,8 +335,12 @@ void find_extrema(arma::vec data_list, arma::vec time_list, int brth_cyc_ind_dur
     int interv_loc_min_ind;
     int loc_min_ind;
     bool end_of_data = false;
+    bool mono_search;
+    bool no_extr_left = false;
+    bool only_this = true;
 
-    while (start_ind <= data_list.size()-1){
+    while (start_ind <= data_list.size()-1 &&  !no_extr_left){
+        mono_search = false;
         end_ind = start_ind + interval_size;
 
         if(end_ind > data_list.size()-1){
@@ -182,21 +352,31 @@ void find_extrema(arma::vec data_list, arma::vec time_list, int brth_cyc_ind_dur
         interv_loc_max_ind = relevant_interval.index_max();
         loc_max_ind = start_ind + interv_loc_max_ind;
 
-        if(loc_max_ind == end_ind){
-            if(end_of_data){
-                qDebug() << "";
-                qDebug() << "Break at loc_max_ind in function find_extrema";
-                qDebug() << "Breaking Max index: " << loc_max_ind << "  Breaking Max time: " << time_list[loc_max_ind];
-            break;         // If extremum is last element of data_list it will not be considered as extremum
-            }
-            else{
-                qDebug() << "Sucht mit Monotonie ein Max ab t = " << time_list[start_ind];
-                monotonocity_extr_search(&data_list, max_ind_list, min_ind_list, start_ind, true, 1);
-                qDebug() << "Max gefunden bei t = " << time_list[max_ind_list->back()];
-            }
+//        if(loc_max_ind == end_ind || no_extr_left){
+        if(only_this){
+//            if(end_of_data){
+//                qDebug() << "";
+//                qDebug() << "Break at loc_max_ind in function find_extrema";
+//                qDebug() << "Breaking Max index: " << loc_max_ind << "  Breaking Max time: " << time_list[loc_max_ind];
+//            break;         // If extremum is last element of data_list it will not be considered as extremum
+//            }
+//            else{
+                qDebug() << "Sucht mit Monotonie ein Max ab t = " << time_list[start_ind] << "bei Index " << start_ind;
+                extremum_search(&data_list, max_ind_list, min_ind_list, start_ind, true, 1, &no_extr_left);
+                qDebug() << "Max gefunden bei t = " << time_list[max_ind_list->back()] << "bei Index " << max_ind_list->back();
+                mono_search = true;
+//            }
         }
         else{
             max_ind_list->push_back(loc_max_ind);
+        }
+
+        num_of_max = max_ind_list->size();
+        if(!mono_search && num_of_max >= 2){
+            interval_size = round((max_ind_list->at(num_of_max-1) - max_ind_list->at(num_of_max-2)) * interval_factor);
+        }
+        else{
+            mono_search = false;
         }
 
         start_ind = max_ind_list->back();
@@ -207,33 +387,34 @@ void find_extrema(arma::vec data_list, arma::vec time_list, int brth_cyc_ind_dur
             end_of_data = true;
         }
 
+        if(no_extr_left){
+            break;
+        }
+
         relevant_interval = data_list.subvec(start_ind, end_ind);
         interv_loc_min_ind = relevant_interval.index_min();
         loc_min_ind = start_ind + interv_loc_min_ind;
 
-        if(loc_min_ind == end_ind){
-            if(end_of_data){
-                qDebug() << "";
-                qDebug() << "Break at loc_min_ind in function find_extrema";
-                qDebug() << "Breaking Min index: " << loc_min_ind << "  Breaking Min time: " << time_list[loc_min_ind];
-                break;
-            }
-            else{
-                qDebug() << "Sucht mit Monotonie ein Min ab t = " << time_list[start_ind];
-                monotonocity_extr_search(&data_list, max_ind_list, min_ind_list, start_ind, false, 1);
-                qDebug() << "Min gefunden bei t = " << time_list[min_ind_list->back()];
-            }
+//        if(loc_min_ind == end_ind || no_extr_left){
+        if(only_this){
+//            if(end_of_data){
+//                qDebug() << "";
+//                qDebug() << "Break at loc_min_ind in function find_extrema";
+//                qDebug() << "Breaking Min index: " << loc_min_ind << "  Breaking Min time: " << time_list[loc_min_ind];
+//                break;
+//            }
+//            else{
+                qDebug() << "Sucht mit Monotonie ein Min ab t = " << time_list[start_ind] << "bei Index " << start_ind;
+                extremum_search(&data_list, max_ind_list, min_ind_list, start_ind, false, 1, &no_extr_left);
+                qDebug() << "Min gefunden bei t = " << time_list[min_ind_list->back()] << "bei Index " << min_ind_list->back();
+                mono_search = true;
+//            }
         }
         else{
             min_ind_list->push_back(loc_min_ind);
         }
 
         start_ind = min_ind_list->back();
-
-        num_of_max = max_ind_list->size();
-        if(num_of_max >= 2){
-            interval_size = round((max_ind_list->at(num_of_max-1) - max_ind_list->at(num_of_max-2)) * interval_factor);
-        }
 
         ++cycle_num;
     }
@@ -252,25 +433,20 @@ void check_last_extremum(int last_max_ind, int last_min_ind, bool* ends_with_min
     }
     else
         lastExtrError.showMessage("Error in function check_last_extremum: Index of last min = Index of last max");
-
 }
 
 
 void MainWindow::on_Button_clicked()
 {
     // Define parameters
-    double start_factor = 0.77;      // Cut dataset to start at this percentage
-    double end_factor = 0.999;       // Cut dataset to end at this percentage
+    double start_factor = 0.01;      // Cut dataset to start at this percentage
+    double end_factor = 0.1;       // Cut dataset to end at this percentage
     int smthMeanWindow = 9;          // Window size for smoothing avergage filter
-//    double brth_cyc_dur = 2.42;     // Estimated breath cycle duration in seconds   -> 12 Hz? nur für Erwachsene
     double interval_factor = 1.0;   // Adjusts estimated breath cycle duration interval
                                     //   for search interval of next extremum
-    double first_interv_factor = 0.3;  // percentage of dataset for searching first two max extrema
     int cycles_for_avg = 1;         // Number of last breath cycles considered for
                                     //   calculation of average breath amplitude range
     int intp_factor = 2;            // New amount of datapoints = old amount of datapoints * intp_factor
-//    double f_MaxRange = 0.5;        // Max frequency to be considered at FFT
-//    double f_MinRange = 0.2;       // Min frequency to be considered at FFT
 
 
     //--------------------------------------------------------------------------
@@ -359,54 +535,23 @@ void MainWindow::on_Button_clicked()
     arma::vec a1_intp;
     arma::interp1(t_vec, a1_vec, t_intp, a1_intp);
 
-//    // Fast Fourier Transformation
-//    int fft_N = 1024;                // number of frequencies to be tested in FFT
-//    double dt_intp = t_intp[2] - t_intp[1];
-//    double f_sample = 1 / dt_intp;
-
-//    arma::vec fft_a1_vec = a1_vec.subvec(0, round(a1_vec.size()*0.1));
-//    arma::cx_vec fft_vec = fft(fft_a1_vec, fft_N);
-
-//    QVector<double> f_FFT(fft_vec.size());
-//    QVector<double> m_FFT(fft_vec.size());
-
-//    int f_ind = round(f_MinRange * fft_N / f_sample);       // k = f * fft_N / f_sample
-//    double frequency = 0.0;
-
-//    while(frequency < f_MaxRange){
-//        frequency = f_ind * f_sample / fft_N;               // f = k * f_sample / fft_N
-//        f_FFT[f_ind] = frequency;
-//        m_FFT[f_ind] = sqrt(real(fft_vec[f_ind])*real(fft_vec[f_ind])+imag(fft_vec[f_ind])*imag(fft_vec[f_ind]));
-//        std::cout << "f = " << frequency << "   ->   " << "Magnitude = "
-//                  << sqrt(real(fft_vec[f_ind])*real(fft_vec[f_ind])+imag(fft_vec[f_ind])*imag(fft_vec[f_ind])) << std::endl;
-//        ++f_ind;
-//    }
-
-//    int fMax_FFT_ind = std::max_element(m_FFT.begin(), m_FFT.end()) - m_FFT.begin();
-//    double fMax_FFT = f_FFT[fMax_FFT_ind];
-//    double mMax_FFT = m_FFT[fMax_FFT_ind];
 
     // Find beginning frequency
-    arma::vec beg_a1_vec = a1_intp.subvec(0, round(a1_vec.size()*first_interv_factor));
     std::vector<int> max_ind_list;
     std::vector<int> min_ind_list;
-    find_first_max_ind(&beg_a1_vec, &max_ind_list, &min_ind_list);
+    find_first_max_ind(&a1_intp, &max_ind_list, &min_ind_list);
+    qDebug() << "Size of data: " << a1_intp.size();
     qDebug() << "";
     qDebug() << "-----find_first_max_ind function: ";
     qDebug() << "Number of found maxima: " << max_ind_list.size();
-    qDebug() << "Index of last max: " << max_ind_list.back();
-    double dt_intp = t_intp[2] - t_intp[1];
+    qDebug() << "Index of last max: " << max_ind_list.back() << "  Time of last max: " << t_intp[max_ind_list.back()];
+    double dt_intp = t_intp[1] - t_intp[0];
     int brth_cyc_ind_dur = max_ind_list[1] - max_ind_list[0];
     double brth_cyc_dur = dt_intp * (max_ind_list[1] - max_ind_list[0]);
     qDebug() << "Calculated duration of first breath cycle = " << brth_cyc_dur << " s";
 
     // Make copy of first maxima for plotting
     std::vector<int> start_max_ind_list = max_ind_list;
-
-    // Find extrema
-
-    //double brth_cyc_dur = 1.0/fMax_FFT;
-    //double brth_cyc_dur = 2.42;
 
     find_extrema(a1_intp, t_intp, brth_cyc_ind_dur, interval_factor, &max_ind_list, &min_ind_list, max_ind_list.back());
     qDebug() << "";
@@ -417,8 +562,8 @@ void MainWindow::on_Button_clicked()
     // Find last extremum
     int last_max_ind = max_ind_list.back();
     int last_min_ind = min_ind_list.back();
-    qDebug() << "Index of last max: " << last_max_ind;
-    qDebug() << "Index of last min: " << last_min_ind;
+    qDebug() << "Index of last max: " << last_max_ind << "  Time of last max: " << t_intp[last_max_ind];
+    qDebug() << "Index of last min: " << last_min_ind << "  Time of last min: " << t_intp[last_min_ind];
 
 
 //    check_last_extremum(last_max_ind, last_min_ind, &ends_with_min);
@@ -455,7 +600,7 @@ void MainWindow::on_Button_clicked()
     }
 
     // Calculate average amplitude range for phase seperation
-    int num_of_cycles = min_ind_list.size();
+    int num_of_cycles = min_ind_list.size()-1;
     arma::vec ampl_range_list(num_of_cycles);
 
     for (int cycle_ind = 0; cycle_ind < num_of_cycles; ++cycle_ind){
@@ -465,6 +610,7 @@ void MainWindow::on_Button_clicked()
 
     double avg_ampl_range = mean(ampl_range_list.subvec(ampl_range_list.size()-cycles_for_avg-1, ampl_range_list.size()-1));
     double phase_ampl_range = avg_ampl_range/5;
+    qDebug() << "phase amplitude range: " << phase_ampl_range;
 
     // Determine last phase number
     double last_ampl_range = abs(half_cycle_data.back() - half_cycle_data[0]);

@@ -38,12 +38,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // reading surface data during treatment
-    rThread = new SurfaceData(this);
-    connect(rThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLnReadingFinished(QStringList, int)));
+    // reading surface data dynamically during treatment
+    rThread = new SurfaceData(this);    // SurfaceData is a QThread object
 
     // loading surface data from planning CT
     lThread = new SurfaceData(this);
+
+    // Updates time and ampl values in UI after a new line was read
+    connect(rThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLnReadingFinished(QStringList, int)));
     connect(lThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLoadingFinished(QStringList, int)));
 }
 
@@ -54,38 +56,52 @@ MainWindow::~MainWindow()
 
 void MainWindow::onLnReadingFinished(QStringList SplitLn, int colNum)
 {
+    // Update time value in UI
     QString timeVal = SplitLn[0];
     ui->timeLabel_4->setText(timeVal);
 
+    // Define amp1 value
     QString amp1Val = SplitLn[1];
 
+    // Delete regex expression at the end if amp1 is last value
     if(colNum == 2){
         amp1Val.remove(amp1Val.size()-4, amp1Val.size()-1);
     }
 
+    // Update amp1 value in UI
     ui->amp1Label_4->setText(amp1Val);
 
+    // Delete regex expression at the end if amp2 is last value
     if(colNum == 3){
         QString amp2Val = SplitLn[2];
+
+        // Update amp2 value in UI if there is one
         ui->amp2Label_4->setText(amp2Val);
     }
 }
 
 void MainWindow::onLoadingFinished(QStringList SplitLn, int colNum)
 {
+    // Update time value in UI
     QString timeValAvg = SplitLn[0];
     ui->timeLabelAvg_4->setText(timeValAvg);
 
+    // Define amp1 value
     QString amp1ValAvg = SplitLn[1];
 
+    // Delete regex expression at the end if amp1 is last value
     if(colNum == 2){
         amp1ValAvg.remove(amp1ValAvg.size()-4, amp1ValAvg.size()-1);
     }
 
+    // Update amp1 value in UI
     ui->amp1LabelAvg_4->setText(amp1ValAvg);
 
+    // Delete regex expression at the end if amp2 is last value
     if(colNum == 3){
         QString amp2ValAvg = SplitLn[2];
+
+        // Update amp2 value in UI if there is one
         ui->amp2LabelAvg_4->setText(amp2ValAvg);
     }
 }
@@ -93,19 +109,21 @@ void MainWindow::onLoadingFinished(QStringList SplitLn, int colNum)
 
 void MainWindow::on_StartReadingButton_4_clicked()
 {
-    // Started
-
-    // Read surface data
+    // Define path of real time data file
     rThread->path = MainWindow::path2;
-    rThread->sleepingTime = MainWindow::dtSurfData;
-    rThread->start();
 
-    // Create dialog window
-    chartDialog = new ChartDialog(this);        // "this" points at MainWindow as a parent
+    // Read data with defined delay
+    rThread->sleepingTime = MainWindow::dtSurfData;
+
+    // Start reading of data
+    rThread->start();                                   // starts SurfaceData::run() for rThread
+
+    // Create dialog window to show real time and planning CT data
+    chartDialog = new ChartDialog(this);        // Define new QDialog object; "this" points at MainWindow as a parent
     chartDialog->setDisabled(false);            // enables input events
 
-    // Create dynamic chart
-    dynamicChart = new DynamicChart(0, 0, rThread);
+    // Create and adjust dynamic chart
+    dynamicChart = new DynamicChart(0, 0, rThread);     // QChart object; starts constructor of DynamicChart
     dynamicChart->setTitle("Real time data");
     dynamicChart->setFont(QFont("sans", 10, QFont::Bold));
     dynamicChart->legend()->hide();
@@ -115,40 +133,45 @@ void MainWindow::on_StartReadingButton_4_clicked()
     QChartView *dynamicChartView = new QChartView(dynamicChart);
     dynamicChartView->setRenderHint(QPainter::Antialiasing);       // Enable render hint 'Antialiasing' for chart view
 
-    // Set layout
+    // Add static and dynamic chart into one dialog window
     chartDialog->setLayout(new QVBoxLayout());
     chartDialog->layout()->addWidget(dynamicChartView);     // add dynamic chartView into the layout
     chartDialog->layout()->addWidget(staticChart);      // add static chartView
     chartDialog->resize(700, 500);
+
+    // Show dialog window
     chartDialog->show();
 }
 
 void MainWindow::on_StopReadingButton_4_clicked()
 {
-    // Stopped
+    // Stop reading of real time data
     rThread->Stop = true;
 }
 
 void MainWindow::on_LoadingButton_4_clicked()
-{
-    // Started
-
+{    
+    // Create chart for UI showing data from planning CT
     staticChart = new QCustomPlot();
     staticChart->setFixedSize(700,210);
 
+    // Add data from file to chart as soon as reading is finished
     QObject::connect(lThread, SIGNAL(DataReadingFinished(QList<double>*, QList<double>*, QList<double>*, int)),
                      this, SLOT(addAvgData(QList<double>*, QList<double>*, QList<double>*, int)));
 
+    // Define path of planning CT file
     lThread->path = MainWindow::path1;
+
+    // Read data with defined delay
     lThread->sleepingTime = 0;
-    lThread->start();
 
-
+    // Start reading of data
+    lThread->start();                       // starts SurfaceData::run() for lThread
 }
 
 void MainWindow::on_StopLoadingButton_4_clicked()
 {
-    // Stopped
+    // Stop reading of planning CT data
     lThread->Stop = true;
 }
 
@@ -168,15 +191,17 @@ void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListP
     staticChart->addGraph();
     staticChart->graph(0)->setPen(stPen);
 
-    // Add data
+    // Convert data to requested type
     QVector<double> StatTimeVec = TimeListPtr->toVector();
     QVector<double> StatAmp1Vec = Amp1ListPtr->toVector();
 
+    // Adjust time values
     double qStart = StatTimeVec[0];
     for(int i = 0; i<StatTimeVec.size(); ++i){
         StatTimeVec[i] = (StatTimeVec[i]-qStart)/1000;      // [t] = 1 ms -> 1 s & t starts with 0
     }
 
+    // Add data to graph
     staticChart->graph(0)->setData(StatTimeVec, StatAmp1Vec);
 
     // Define position parameters for layout

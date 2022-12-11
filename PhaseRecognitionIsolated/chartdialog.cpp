@@ -13,10 +13,6 @@
 #include <iostream>
 #include <mainwindow.h>
 
-// Könnte es sein, dass zwei verschiedene dynamicChartView bestehen und die Funktion (wenn keine Punkte der Series
-// übernommen werden) das falsche ChartView Objekt nimmt? Weil bei unbenennung der Variable mit Rename Symbol wurde
-// das ChartView nicht für den gesamten Code geändert
-
 ChartDialog::ChartDialog(QWidget *parent)
 {
     ui->setupUi(this);

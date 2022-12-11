@@ -37,7 +37,7 @@ FORMS    += mainwindow.ui \
 
 win32 {
 
-win32: LIBS += -L$$PWD/../phaseRecognition/armadillo-10.2.0/Windows10/Debug/ -larmadillo
+win32: LIBS += -L$$PWD/../phaseRecognition/armadillo-10.2.0/Windows10/Debug/ -larmadillo -BLAS -LAPACK
 INCLUDEPATH += $$PWD/../phaseRecognition/armadillo-10.2.0/include
 DEPENDPATH += $$PWD/../phaseRecognition/armadillo-10.2.0/include
 

@@ -41,22 +41,25 @@ DynamicChart::DynamicChart(QGraphicsItem *parent, Qt::WindowFlags wFlags, Surfac
     dataSeries->setPen(redPen);                         // apply defined QPen to spline chart
 
     // Set axis
-    dataAxis = new QtCharts::QValueAxis;
     xVal = 126;         // [t] = 1 s
     yVal = 53.3794;
     dataSeries->append(xVal, yVal);
-    createDefaultAxes();                            // create axes based on already added series
-    setAxisX(dataAxis, dataSeries);                 // set x axis
-    dataAxis->setTickCount(8);                      // number of grid lines (one value for every grid line)
+    axisX = new QtCharts::QValueAxis;
+    axisY = new QtCharts::QValueAxis;
+    axisX->setTickCount(8);                      // number of grid lines (one value for every grid line)
+    addAxis(axisX, Qt::AlignBottom);
+    addAxis(axisY, Qt::AlignLeft);
     xAxisRange = 20;
-    axisX()->setRange(xVal, xVal + xAxisRange);
-    axisY()->setRange(50, 65);
-    axisX()->setTitleText("t [s]");
-    axisY()->setTitleText("Amp. [mm]");
+    axisX->setRange(xVal, xVal + xAxisRange);
+    axisY->setRange(50, 65);
+    axisX->setTitleText("t [s]");
+    axisY->setTitleText("Amp. [mm]");
     xAxisStart = xVal;
 
     // Add series to chart
     addSeries(dataSeries);
+    dataSeries->attachAxis(axisX);
+    dataSeries->attachAxis(axisY);
 }
 
 DynamicChart::~DynamicChart()

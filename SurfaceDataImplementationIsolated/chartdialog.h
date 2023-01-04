@@ -39,7 +39,8 @@ public:
 
     QtCharts::QChartView *dynamicChartView;
     QtCharts::QSplineSeries *dataSeries;
-    QtCharts::QValueAxis *dataAxis;
+    QtCharts::QValueAxis *axisX;
+    QtCharts::QValueAxis *axisY;
     qreal xVal;
     qreal yVal;
     int xAxisRange;

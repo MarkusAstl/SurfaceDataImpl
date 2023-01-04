@@ -68,15 +68,15 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
 
 void SurfaceData::run(){
 
-//    // Display files and directories in current folder
-//    QDir dir;
-//    foreach(QFileInfo item, dir.entryInfoList() )
-//        {
-//            if(item.isDir())
-//                qDebug() << "Dir: " << item.absoluteFilePath();
-//            if(item.isFile())
-//                qDebug() << "File: " << item.absoluteFilePath();
-//        }
+    // Display files and directories in current folder
+    QDir dir;
+    foreach(QFileInfo item, dir.entryInfoList() )
+        {
+            if(item.isDir())
+                qDebug() << "Dir: " << item.absoluteFilePath();
+            if(item.isFile())
+                qDebug() << "File: " << item.absoluteFilePath();
+        }
 
     // Open csv file
     QFile f(this->path);
@@ -115,7 +115,7 @@ void SurfaceData::run(){
     }
 
 
-    // Read data line by liny
+    // Read data line by line
     while (!f.atEnd()){
 
         // Read one line
@@ -125,7 +125,7 @@ void SurfaceData::run(){
         if(this->Stop) break;
 
         // Emit signal to update time and ampl values in UI
-        emit LnReadingFinished(SplitLn, colNum);
+        emit LnReadingFinished(SplitLn, colNum);        // ??? Maybe emit two similar signals instead of only one
 
         // Save line in lists (TimeList, Amp1List, Amp2List)
         QMutex mutex;               // Lock lists and columns to avoid acessing same storage twice at the same time

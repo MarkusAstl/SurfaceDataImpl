@@ -236,3 +236,187 @@ void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListP
 }
 
 
+void MainWindow::extremum_search(QList<double>* data, QList<int>* max_ind_list, QList<int>* min_ind_list, bool* maxIsLast){
+
+    bool is_max;
+    bool is_min;
+    bool search_max = true;
+    int search_range = 20;
+    int q = search_range;
+    int q_max;
+    int q_min;
+    double a1_diff;
+    double a1_min_diff = 0.6;
+    bool skip;
+    int num_of_extr = 0;
+
+    while(q <= data->size()-1){
+        if(search_max){
+            skip = false;
+            is_max = false;
+            q_max = q - search_range;
+
+            // inspect if q_max is a local max
+            if(data->at(q_max) > data->at(q)){
+                for(int dq = 1; dq < search_range; ++dq){
+
+                    if(data->at(q_max) > data->at(q-dq)){
+
+                        a1_diff = abs(data->at(q_max) - data->at(q-dq));
+                        if(a1_diff >= a1_min_diff){
+                            is_max = true;
+                        }
+                    }
+                    else{
+                        is_max = false;
+                        ++q;
+                        skip = true;
+                        break;
+                    }
+                }
+
+                while(!skip && !is_max && q < data->size()-1){
+                    ++q;
+
+                    if(data->at(q_max) > data->at(q)){
+                        a1_diff = abs(data->at(q_max) - data->at(q));
+
+                        if(a1_diff >= a1_min_diff){
+                            is_max = true;
+                        }
+                    }
+                    else {
+                        q = q + search_range;
+                        break;
+                    }
+                }
+
+                if(is_max){
+                    max_ind_list->push_back(q_max);
+                    *maxIsLast = true;
+                    ++ num_of_extr;
+
+                    is_max = false;
+                    search_max = false;
+                    ++q;
+                }
+            }
+
+            else{
+                ++q;
+                //continue;
+            }
+        }
+
+        if(!search_max){
+            skip = false;
+            is_min = false;
+            q_min = q - search_range;
+
+            if(data->at(q_min) < data->at(q)){
+
+                for(int dq = 1; dq < search_range; ++dq){
+
+                    if(data->at(q_min) < data->at(q-dq)){
+
+                        a1_diff = abs(data->at(q_min) - data->at(q-dq));
+                        if(a1_diff >= a1_min_diff){
+                            is_min = true;
+                        }
+                    }
+                    else{
+                        is_min = false;
+                        ++q;
+                        skip = true;
+                        break;
+                    }
+                }
+
+                while(!skip && !is_min && q < data->size()-1){
+                    ++q;
+
+                    if(data->at(q_min) < data->at(q)){
+                        a1_diff = abs(data->at(q_min) - data->at(q));
+
+                        if(a1_diff >= a1_min_diff){
+                            is_min = true;
+                        }
+                    }
+                    else {
+                        q = q + search_range;
+                        break;
+                    }
+                }
+
+                if(is_min){
+                    min_ind_list->push_back(q_min);
+                    *maxIsLast = false;
+                    ++ num_of_extr;
+
+                    is_min = false;
+                    search_max = true;
+                    ++q;
+                }
+            }
+
+            else{
+                ++q;
+                //continue;
+            }
+        }
+    }
+}
+
+void MainWindow::on_StartPhaseRecognitionButton_clicked()
+{
+    QList<int> maxIndList;
+    QList<int> minIndList;
+    bool maxIsLast;
+    extremum_search(&rThread->smthdAmp1List, &maxIndList, &minIndList, &maxIsLast);
+    QList<double> phaseBorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+    int peak2Ind;
+    int peak1Ind;
+    int peak0Ind;
+
+    if (maxIsLast == true){
+        peak2Ind = maxIndList.rbegin()[0];
+        peak1Ind = minIndList.rbegin()[0];
+        peak0Ind = maxIndList.rbegin()[1];
+
+    }
+    else{
+        peak2Ind = minIndList.rbegin()[0];
+        peak1Ind = maxIndList.rbegin()[0];
+        peak0Ind = minIndList.rbegin()[1];
+    }
+
+    QList<int> BorderTimes = {0,0,0,0,0,0,0,0,0,0};
+    calcPhaseBorders(&rThread->smthdAmp1List, &BorderTimes, &peak0Ind, &peak1Ind);
+    calcPhaseBorders(&rThread->smthdAmp1List, &BorderTimes, &peak1Ind, &peak2Ind);
+}
+
+void MainWindow::calcPhaseBorders(QList<double>* data, QList<int>* BorderTimes, int* A1ind, int* A2ind){
+
+    double dA = data->at(*A1ind) - data->at(*A2ind);
+    double dAphase = dA / 5;
+
+    QList<int> newBorderTimes(BorderTimes->mid(5,9));
+
+    int phase = 1;
+    int i = *A1ind;
+
+    while(i < *A2ind && phase <= 4){
+        double dA_iteration = abs(data->at(i) - data->at(*A1ind));
+        if (dA_iteration > abs(phase*dAphase)){
+            newBorderTimes.append(i-1);
+            phase = phase + 1;
+        }
+
+        i = i+1;
+    }
+
+    newBorderTimes.append(*A2ind);
+    *BorderTimes = newBorderTimes;
+}
+

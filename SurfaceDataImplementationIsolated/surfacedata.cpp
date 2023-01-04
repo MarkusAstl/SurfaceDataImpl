@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QDir>
+#include <QtMath>
 
 #include <iostream>
 #include <new>
@@ -37,6 +38,21 @@ QStringList readOneLn(QFile &f){
     return SplitLn;
 }
 
+bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, int *windowSize, QList<double> *h, double *aValue){
+    // Low pass filter construncted with convolution using a left sided exponential moving avergage filter
+
+    int N = Amp1List->size();
+    double convSum = 0.0;
+    double convProd = 1.0;
+
+    for(int convInd = 0; convInd < *windowSize; ++convInd){
+        convProd = *aValue * (Amp1List->at(N-convInd-1) * h->at(convInd));
+        convSum = convProd+convSum;
+    }
+
+    smthdAmp1List->append(convSum);
+    return true;
+}
 
 bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<double> &Amp2List, QStringList &SplitLn, int &colNum){
 
@@ -68,15 +84,15 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
 
 void SurfaceData::run(){
 
-    // Display files and directories in current folder
-    QDir dir;
-    foreach(QFileInfo item, dir.entryInfoList() )
-        {
-            if(item.isDir())
-                qDebug() << "Dir: " << item.absoluteFilePath();
-            if(item.isFile())
-                qDebug() << "File: " << item.absoluteFilePath();
-        }
+//    // Display files and directories in current folder
+//    QDir dir;
+//    foreach(QFileInfo item, dir.entryInfoList() )
+//        {
+//            if(item.isDir())
+//                qDebug() << "Dir: " << item.absoluteFilePath();
+//            if(item.isFile())
+//                qDebug() << "File: " << item.absoluteFilePath();
+//        }
 
     // Open csv file
     QFile f(this->path);
@@ -114,9 +130,12 @@ void SurfaceData::run(){
         qDebug() << f.errorString();
     }
 
+    // Iteration index for start of filtering
+    int iteration = 0;
 
     // Read data line by line
     while (!f.atEnd()){
+        iteration = iteration + 1;
 
         // Read one line
         QStringList SplitLn = readOneLn(f);
@@ -134,6 +153,32 @@ void SurfaceData::run(){
             qDebug() << f.errorString();
         }
         mutex.unlock();
+
+        // Filter data
+        if (iteration > windowSize){
+            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &h, &aValue)) {
+                qDebug() << f.errorString();
+            }
+        }
+        // Set parameters for filtering
+        else if (iteration == windowSize){
+            double fs = 1/(TimeList[1]-TimeList[0]);
+            aValue = qSqrt( qPow( qCos(2*M_PI* fc/ fs), 2) - 4*qCos(2*M_PI* fc/ fs) + 3) + qCos(2*M_PI* fc/ fs) - 1;
+            fValue = 1-aValue;
+
+            for (int k = 0; k <= windowSize; k++){
+                h.append(qPow(fValue, k));
+            }
+
+            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &h, &aValue)) {
+                qDebug() << f.errorString();
+            }
+
+            double firstVal = smthdAmp1List[0];
+            for (int u = 1; u < windowSize; u++){
+                 smthdAmp1List.append(firstVal);
+            }
+        }
 
         // Sleep for certain time to simulate dynamical reading
         this->msleep(this->sleepingTime);

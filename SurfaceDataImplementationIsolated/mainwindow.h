@@ -7,6 +7,7 @@
 #include "surfacedata.h"
 #include "chartdialog.h"
 #include "qcustomplot.h"
+#include <armadillo>
 
 #include <QListWidgetItem>
 
@@ -48,5 +49,8 @@ private slots:
     void on_StopReadingButton_4_clicked();
     void on_LoadingButton_4_clicked();
     void on_StopLoadingButton_4_clicked();
+    void on_StartPhaseRecognitionButton_clicked();
+    void extremum_search(QList<double>*, QList<int>*, QList<int>*, bool*);
+    void calcPhaseBorders(QList<double>*, QList<int>*, int*, int*);
 };
 #endif // MAINWINDOW_H

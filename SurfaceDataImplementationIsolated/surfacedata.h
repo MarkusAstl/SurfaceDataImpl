@@ -16,6 +16,13 @@ public:
     QList<double> Amp1List;
     QList<double> Amp2List;
 
+    int windowSize = 9;
+    double fc = 0.333;
+    double aValue;
+    double fValue;
+    QList<double> h;    // convolution function h for filtering
+    QList<double> smthdAmp1List;
+
     QString path;
     int sleepingTime;
 

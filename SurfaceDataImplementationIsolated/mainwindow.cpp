@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QString>
 #include <armadillo>
+#include <QLocale>
 
 // Surface data reading
 #include <surfacedata.h>
@@ -47,6 +48,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Updates time and ampl values in UI after a new line was read
     connect(rThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLnReadingFinished(QStringList, int)));
     connect(lThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLoadingFinished(QStringList, int)));
+
+    // Updates phase in UI
+    connect(rThread,SIGNAL(showCurrentPhase(int*)), this, SLOT(phaseChanged(int*)));
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +120,7 @@ void MainWindow::on_StartReadingButton_4_clicked()
     rThread->sleepingTime = MainWindow::dtSurfData;
 
     // Start reading of data
+    rThread->filtering = true;                          // filter data in real time and enable phase recognition
     rThread->start();                                   // starts SurfaceData::run() for rThread
 
     // Create dialog window to show real time and planning CT data
@@ -137,10 +142,16 @@ void MainWindow::on_StartReadingButton_4_clicked()
     chartDialog->setLayout(new QVBoxLayout());
     chartDialog->layout()->addWidget(dynamicChartView);     // add dynamic chartView into the layout
     chartDialog->layout()->addWidget(staticChart);      // add static chartView
-    chartDialog->resize(700, 500);
+    chartDialog->resize(1100, 500);
 
     // Show dialog window
     chartDialog->show();
+}
+
+void MainWindow::phaseChanged(int* phase)
+{
+    QString phaseLabelStr = "Current phase: " + QString::number(*phase);
+    ui->phaseLabel->setText(phaseLabelStr);
 }
 
 void MainWindow::on_StopReadingButton_4_clicked()
@@ -166,6 +177,7 @@ void MainWindow::on_LoadingButton_4_clicked()
     lThread->sleepingTime = 0;
 
     // Start reading of data
+    lThread->filtering = false;             // planning CT data does not need to bee filtered
     lThread->start();                       // starts SurfaceData::run() for lThread
 }
 
@@ -241,7 +253,7 @@ void MainWindow::extremum_search(QList<double>* data, QList<int>* max_ind_list, 
     bool is_max;
     bool is_min;
     bool search_max = true;
-    int search_range = 20;
+    int search_range = 10;
     int q = search_range;
     int q_max;
     int q_min;
@@ -369,54 +381,45 @@ void MainWindow::extremum_search(QList<double>* data, QList<int>* max_ind_list, 
 
 void MainWindow::on_StartPhaseRecognitionButton_clicked()
 {
-    QList<int> maxIndList;
-    QList<int> minIndList;
-    bool maxIsLast;
-    extremum_search(&rThread->smthdAmp1List, &maxIndList, &minIndList, &maxIsLast);
-    QList<double> phaseBorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-    int peak2Ind;
-    int peak1Ind;
-    int peak0Ind;
+    // Find all extrema in data that have been measured until now and save them into max and min list
+    extremum_search(&rThread->smthdAmp1List, &rThread->maxIndList, &rThread->minIndList, rThread->maxIsLast);
 
-    if (maxIsLast == true){
-        peak2Ind = maxIndList.rbegin()[0];
-        peak1Ind = minIndList.rbegin()[0];
-        peak0Ind = maxIndList.rbegin()[1];
+    // Determine last 4 extrema for calculations of phase borders
+    if (rThread->maxIsLast){
+        rThread->peak1Ind = rThread->maxIndList.rbegin()[0];
+        rThread->peak2Ind = rThread->minIndList.rbegin()[0];
+        rThread->peak3Ind = rThread->maxIndList.rbegin()[1];
+        rThread->peak4Ind = rThread->minIndList.rbegin()[1];
 
     }
     else{
-        peak2Ind = minIndList.rbegin()[0];
-        peak1Ind = maxIndList.rbegin()[0];
-        peak0Ind = minIndList.rbegin()[1];
+        rThread->peak1Ind = rThread->minIndList.rbegin()[0];
+        rThread->peak2Ind = rThread->maxIndList.rbegin()[0];
+        rThread->peak3Ind = rThread->minIndList.rbegin()[1];
+        rThread->peak4Ind = rThread->maxIndList.rbegin()[1];
     }
 
-    QList<int> BorderTimes = {0,0,0,0,0,0,0,0,0,0};
-    calcPhaseBorders(&rThread->smthdAmp1List, &BorderTimes, &peak0Ind, &peak1Ind);
-    calcPhaseBorders(&rThread->smthdAmp1List, &BorderTimes, &peak1Ind, &peak2Ind);
-}
+    // Find time difference from last peak to each of the 5 phases for both half breathing cycles (PhaseBorders)
+    rThread->BorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    rThread->globalBorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    rThread->calcPhaseBordersByTime(&rThread->smthdAmp1List, &rThread->TimeList, &rThread->BorderTimes,
+                              &rThread->globalBorderTimes, &rThread->peak4Ind, &rThread->peak3Ind, &rThread->peak2Ind);
+    rThread->calcPhaseBordersByTime(&rThread->smthdAmp1List, &rThread->TimeList, &rThread->BorderTimes,
+                              &rThread->globalBorderTimes, &rThread->peak3Ind, &rThread->peak2Ind, &rThread->peak1Ind);
 
-void MainWindow::calcPhaseBorders(QList<double>* data, QList<int>* BorderTimes, int* A1ind, int* A2ind){
+    rThread->calcPhaseBordersByAmp(&rThread->smthdAmp1List, &rThread->BorderAmps,
+                              &rThread->globalBorderAmps, &rThread->peak3Ind, &rThread->peak2Ind, &rThread->peak1Ind);
 
-    double dA = data->at(*A1ind) - data->at(*A2ind);
-    double dAphase = dA / 5;
-
-    QList<int> newBorderTimes(BorderTimes->mid(5,9));
-
-    int phase = 1;
-    int i = *A1ind;
-
-    while(i < *A2ind && phase <= 4){
-        double dA_iteration = abs(data->at(i) - data->at(*A1ind));
-        if (dA_iteration > abs(phase*dAphase)){
-            newBorderTimes.append(i-1);
-            phase = phase + 1;
-        }
-
-        i = i+1;
+    // Display initial phase separation at beginning of phase recognition
+    qDebug() << "phase " << 1 << " in [" << rThread->TimeList[rThread->peak1Ind] << ", " << rThread->globalBorderTimes[0] << "]";
+    for (int r = 1; r < rThread->globalBorderTimes.size(); r++){
+        qDebug() << "phase " << r+1 << " in [" << rThread->globalBorderTimes[r-1] << ", " << rThread->globalBorderTimes[r] << "]";
     }
 
-    newBorderTimes.append(*A2ind);
-    *BorderTimes = newBorderTimes;
+    rThread->prReady = true;
 }
+
+
+
 

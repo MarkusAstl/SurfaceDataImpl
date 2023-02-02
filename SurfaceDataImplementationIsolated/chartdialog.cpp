@@ -36,9 +36,9 @@ DynamicChart::DynamicChart(QGraphicsItem *parent, Qt::WindowFlags wFlags, Surfac
     dataSeries = new QtCharts::QSplineSeries(this);
 
     // Set drawing pen
-    QPen redPen(Qt::blue);                              // QPen defines how QPainter draws lines -> blue line
-    redPen.setWidth(2);
-    dataSeries->setPen(redPen);                         // apply defined QPen to spline chart
+    QPen drawPen(Qt::blue);                              // QPen defines how QPainter draws lines -> blue line
+    drawPen.setWidth(2);
+    dataSeries->setPen(drawPen);                         // apply defined QPen to spline chart
 
     // Set axis
     xVal = 126;         // [t] = 1 s
@@ -46,7 +46,7 @@ DynamicChart::DynamicChart(QGraphicsItem *parent, Qt::WindowFlags wFlags, Surfac
     dataSeries->append(xVal, yVal);
     axisX = new QtCharts::QValueAxis;
     axisY = new QtCharts::QValueAxis;
-    axisX->setTickCount(8);                      // number of grid lines (one value for every grid line)
+    axisX->setTickCount(16);                      // number of grid lines (one value for every grid line)
     addAxis(axisX, Qt::AlignBottom);
     addAxis(axisY, Qt::AlignLeft);
     xAxisRange = 20;

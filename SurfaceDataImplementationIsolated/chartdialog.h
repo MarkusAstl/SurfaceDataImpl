@@ -45,6 +45,7 @@ public:
     qreal yVal;
     int xAxisRange;
     qreal xAxisStart;
+    QPen drawPen;
     //int debugVal;
 
 public slots:

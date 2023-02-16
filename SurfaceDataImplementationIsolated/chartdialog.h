@@ -34,7 +34,7 @@ class DynamicChart: public QtCharts::QChart
 {
     Q_OBJECT
 public:
-    DynamicChart(QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0, SurfaceData *rThread = 0);
+    DynamicChart(QGraphicsItem *parent = 0, Qt::WindowFlags wFlags = 0, SurfaceData *rThread = 0, double* frst_A = 0, double* frst_t = 0);
     virtual ~DynamicChart();
 
     QtCharts::QChartView *dynamicChartView;
@@ -44,12 +44,16 @@ public:
     qreal xVal;
     qreal yVal;
     int xAxisRange;
+    int yAxisRange;
     qreal xAxisStart;
+    qreal yAxisMiddle;
     QPen drawPen;
     //int debugVal;
 
 public slots:
     void addDataPoint(QStringList, int);
+    void addFilteredDataPoint(double, double);
+    void on_adjustYaxis(double*);
 
 private:
 

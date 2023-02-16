@@ -38,7 +38,7 @@ QStringList readOneLn(QFile &f){
     return SplitLn;
 }
 
-bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, int *windowSize, QList<double> *h, double *aValue){
+bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, int *windowSize, double *aValue){
     // Low pass filter construncted with convolution using a left sided exponential moving avergage filter
 
     int N = Amp1List->size();
@@ -46,7 +46,7 @@ bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, i
     double convProd = 1.0;
 
     for(int convInd = 0; convInd < *windowSize; ++convInd){
-        convProd = *aValue * (Amp1List->at(N-convInd-1) * h->at(convInd));
+        convProd = *aValue * (Amp1List->at(N-1-convInd) * qPow((1-*aValue), convInd));
         convSum = convProd+convSum;
     }
 
@@ -68,7 +68,7 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
 
         switch (colInd) {
         case 0:
-            TimeList.append(doubleVal);
+            TimeList.append(doubleVal/1000);
             break;
         case 1:
             Amp1List.append(doubleVal);
@@ -82,125 +82,78 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
 }
 
 
-void SurfaceData::phaseRecognition(bool* maxIsLast, double* t, QList<double>* globalBorderTimes, int* phase)
+void SurfaceData::phaseRecognition(double* t, double* t_lastMax, double* dT, int* phase, bool* extrDetectionActive, bool* phaseRecogActive)
 {
-    // Adjust to monotony
-    int base;
-    if (*maxIsLast){
-        base = 5;
-    }
-    else{
-        base = 0;
-    }
+
 
     // Determine phase
-    if (*t < globalBorderTimes->at(0)){
-        *phase = base + 1;
+    if (*t < *t_lastMax + *dT){
+        *phase = 1;
     }
-    else if(*t >= globalBorderTimes->at(0) && *t < globalBorderTimes->at(1)){
-        *phase = base + 2;
+    else if(*t >= *t_lastMax + *dT * 1 && *t < *t_lastMax + *dT * 2){
+        *phase = 2;
     }
-    else if(*t >= globalBorderTimes->at(1) && *t < globalBorderTimes->at(2)){
-        *phase = base + 3;
+    else if(*t >= *t_lastMax + *dT * 2 && *t < *t_lastMax + *dT * 3){
+        *phase = 3;
     }
-    else if(*t >= globalBorderTimes->at(2) && *t < globalBorderTimes->at(3)){
-        *phase = base + 4;
+    else if(*t >= *t_lastMax + *dT * 3 && *t < *t_lastMax + *dT * 4){
+        *phase = 4;
     }
-    else if(*t >= globalBorderTimes->at(3) && *t < globalBorderTimes->at(4)){
-        *phase = base + 5;
+    else if(*t >= *t_lastMax + *dT * 4 && *t < *t_lastMax + *dT * 5){
+        *phase = 5;
     }
-    else if(*t >= globalBorderTimes->at(4) && *t < globalBorderTimes->at(5)){
-        *phase = abs(base - 6);
+    else if(*t >= *t_lastMax + *dT * 5 && *t < *t_lastMax + *dT * 6){
+        *phase = 6;
     }
-    else if(*t >= globalBorderTimes->at(5) && *t < globalBorderTimes->at(6)){
-        *phase = abs(base - 6);
+    else if(*t >= *t_lastMax + *dT * 6 && *t < *t_lastMax + *dT * 7){
+        *phase = 7;
     }
-    else if(*t >= globalBorderTimes->at(6) && *t < globalBorderTimes->at(7)){
-        *phase = abs(base - 7);
+    else if(*t >= *t_lastMax + *dT * 7 && *t < *t_lastMax + *dT * 8){
+        *phase = 8;
     }
-    else if(*t >= globalBorderTimes->at(7) && *t < globalBorderTimes->at(8)){
-        *phase = abs(base - 8);
+    else if(*t >= *t_lastMax + *dT * 8 && *t < *t_lastMax + *dT * 9){
+        *phase = 9;
     }
-    else if(*t >= globalBorderTimes->at(8) && *t < globalBorderTimes->at(9)){
-        *phase = abs(base - 9);
+    else if(*t >= *t_lastMax + *dT * 9 && *t < *t_lastMax + *dT * 12){
+        *phase = 10;
     }
-    else if(*t >= globalBorderTimes->at(5)){
-        *phase = abs(base - 10);
+    else{
+        *phase = 0;                  // Fallback if t > 12*dT or if t < t_lastMax
+        *phaseRecogActive = false;
     }
-
-    qDebug() << "t = " << *t << " -> phase = " << *phase;
 }
 
 
 
-bool SurfaceData::monotonyChanged(double* p1, double* p2, double* p3, bool* maxIsLast){
+bool SurfaceData::newMaxDetected(QList<double>* AmpList, bool* maxIsLast, int* lastMinInd, int* lastMaxInd){
 
     // Check if monotony changed in last 3 datapoints
-    bool newExtremum = false;
+    bool newMax = false;
 
-    if (*maxIsLast && *p3 < *p2 && *p3 < *p1){
-        newExtremum = true;
+    if (*maxIsLast && AmpList->rbegin()[2] < AmpList->rbegin()[1] && AmpList->rbegin()[2] < AmpList->rbegin()[0]){
         *maxIsLast = false;
+        *lastMinInd = AmpList->size() - 3;
     }
-    else if (!*maxIsLast && *p3 > *p2 && *p3 > *p1){
-        newExtremum = true;
+    else if (!*maxIsLast && AmpList->rbegin()[2] > AmpList->rbegin()[1] && AmpList->rbegin()[2] > AmpList->rbegin()[0]){
+        if (abs(AmpList->rbegin()[2]-AmpList->at(*lastMinInd)) > 0.1*abs(AmpList->at(*lastMinInd)-AmpList->at(*lastMaxInd))){
+            newMax = true;
+        }
         *maxIsLast = true;
     }
 
-    return newExtremum;
+    return newMax;
 }
 
-void SurfaceData::calcPhaseBordersByTime(QList<double>* data, QList<double>* TimeList, QList<double>* BorderTimes,
-                      QList<double>* globalBorderTimes, int* A3ind, int* A2ind, int* A1ind){
-    // A1...last extremum, A2...second last extremum, A3...third last extremum
-
-
-    double T = TimeList->at(*A1ind) - TimeList->at(*A3ind);
-    double T_half = TimeList->at(*A1ind) - TimeList->at(*A2ind);
-    qDebug() << "Period time of phase border calculation interval from " << TimeList->at(*A3ind) << " to " <<
-                TimeList->at(*A1ind) << " = " << T;
-    qDebug() << "Future Interval should be:  " << TimeList->at(*A1ind) << " to " << TimeList->at(*A1ind)+T_half << " to " << TimeList->at(*A1ind)+T;
-
-    // Calculate Ammplitude Difference for one phase
-    double dA = data->at(*A2ind) - data->at(*A1ind);
-    double dAphase = dA / 5.0;
-
-    // Phases will be updated for only one half of the breathing cycle
-    QList<double> newBorderTimes(BorderTimes->mid(5,9));
-
-    // Locate borders between phases
-    int phaseInd = 1;
-    int i = *A2ind;
-
-    while(i <= *A1ind && phaseInd <= 5){
-        double dA_iteration = abs(data->at(i) - data->at(*A2ind));
-
-        if (dA_iteration >= abs(phaseInd*dAphase)){
-            double globalBorderTime = TimeList->at(i);
-            double localBorderTime = globalBorderTime - TimeList->at(*A2ind);
-            newBorderTimes.append(localBorderTime);
-            phaseInd = phaseInd + 1;
-        }
-
-        i = i+1;
+bool SurfaceData::checkBreathCycleDur(double* T, double* T_planning, double* T_old) {
+    bool phaseRecogActive;
+    if (*T > 0.5 * *T_planning && *T >= 0.75* *T_old && *T <= 1.25 * *T_old){            // 0.5 because of hysteresis
+        phaseRecogActive = true;
     }
-
-    // Update phase border times
-    *BorderTimes = newBorderTimes;
-
-    QList<double> newGlobalBorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-
-    double globalBorderTime = TimeList->at(*A1ind);
-    for (int pInd = 0; pInd < 5; pInd++){
-        newGlobalBorderTimes[pInd] = globalBorderTime + BorderTimes->at(pInd);
+    else {
+        phaseRecogActive = false;
+        qDebug() << "phaseRecogActive = false   " << *T << *T_planning * 0.5 << *T_old;
     }
-
-    globalBorderTime = newGlobalBorderTimes[4];
-    for (int pInd = 5; pInd < 10; pInd++){
-        newGlobalBorderTimes[pInd] = globalBorderTime + BorderTimes->at(pInd);
-    }
-
-    *globalBorderTimes = newGlobalBorderTimes;
+    return phaseRecogActive;
 }
 
 
@@ -223,6 +176,7 @@ void SurfaceData::run(){
     if (!f.open(QIODevice::ReadOnly)) {
         qDebug() << f.errorString();
     }
+
 
 
     // Locate row of headers and determine number of columns
@@ -257,7 +211,7 @@ void SurfaceData::run(){
     int iteration = 0;
 
     //
-    prReady = false;
+    extrDetectionActive = false;
     QMutex mutex;               // Lock lists and columns to avoid acessing same storage twice at the same time
 
 
@@ -272,7 +226,7 @@ void SurfaceData::run(){
         if(this->Stop) break;
 
         // Emit signal to update time and ampl values in UI
-        emit LnReadingFinished(SplitLn, colNum);        // ??? Maybe emit two similar signals instead of only one
+        emit LnReadingFinished(SplitLn, colNum);
 
         // Save line in lists (TimeList, Amp1List, Amp2List)
         mutex.lock();
@@ -282,73 +236,75 @@ void SurfaceData::run(){
         mutex.unlock();
 
 
+        // Start filtering only if there are enough values available and if filtering is enabled
         if (iteration > windowSize && filtering){
 
             // Filter data
-            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &h, &aValue)) {     // !!!! Add mutex if prThread is defined
+            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &aValue)) {
                 qDebug() << f.errorString();
             }
+            emit FilteringFinished(TimeList.rbegin()[0], smthdAmp1List.rbegin()[0]);
 
-            // Wait till initial parameters for phase recognition are set
-            if(prReady){
+            // Wait till initial parameters for phase recognition are set by pressing 'Start Phase Recognition' button
+            if(extrDetectionActive){
 
-                dt = TimeList.rbegin()[0] - TimeList[peak1Ind];
+                // Check if there is a new max
+                if (newMaxDetected(&smthdAmp1List, &maxIsLast, &lastMinInd, &newMaxInd)){
 
-                // Update parameters if new extremum is detected
-                if (monotonyChanged(&smthdAmp1List.rbegin()[0], &smthdAmp1List.rbegin()[1], &smthdAmp1List.rbegin()[2], maxIsLast)){
+                    // Update indices of last 2 max
+                    oldMaxInd = newMaxInd;
+                    newMaxInd = TimeList.size()-3;
 
-                    if(dt < 0.8 * BorderTimes[4]){
-                        *maxIsLast = !*maxIsLast;
+                    mutex.lock();
+
+                    // Update time of newest (T) and last (T_old) breathing cycle
+                    T_old = T;
+                    T = abs(TimeList[newMaxInd] - TimeList[oldMaxInd]);
+
+                    if (!checkBreathCycleDur(&T, &T_planning, &T_old)){
+                        // Fallback for significant changes in duration of breathing cycle
+                        phase = 0;
+                        phaseRecogActive = false;
                     }
-                    else{
-                        peak3Ind = peak2Ind;
-                        peak2Ind = peak1Ind;
-                        peak1Ind = smthdAmp1List.size()-4;
-
-                        qDebug() << "New extremum at t = " << TimeList[peak1Ind];
-
-                        mutex.lock();
-                        calcPhaseBordersByTime(&smthdAmp1List, &TimeList, &BorderTimes, &globalBorderTimes, &peak3Ind, &peak2Ind, &peak1Ind);
-                        mutex.unlock();
-
-                        //emit monotonyCheckDone(&smthdAmp1List, &this->BorderTimes, &this->peak3Ind, &this->peak2Ind, &this->peak1Ind);
-                        qDebug() << globalBorderTimes;
+                    else {
+                        // Update phase borders
+                        dT = T /10.0;
+                        phaseRecogActive = true;
                     }
-                }
 
-                if(dt > 1.3 * BorderTimes[4]){
-                    phase = 0;
-                    prReady = false;
+                    mutex.unlock();
                 }
 
                 // Do phase recognition
-                phaseRecognition(maxIsLast, &TimeList.rbegin()[0], &globalBorderTimes, &phase);
+                if (phaseRecogActive){
+                    phaseRecognition(&TimeList.rbegin()[0], &TimeList[newMaxInd], &dT, &phase, &extrDetectionActive, &phaseRecogActive);
+                }
+
                 emit showCurrentPhase(&phase);
             }
         }
 
         // Set parameters for filtering
         else if (iteration == windowSize){
-            double fs = 1/(TimeList[1]-TimeList[0]);
+            fs = 1/(TimeList[1]-TimeList[0]);
+            qDebug() << "dt = " << TimeList[1]-TimeList[0];
             aValue = qSqrt( qPow( qCos(2*M_PI* fc/ fs), 2) - 4*qCos(2*M_PI* fc/ fs) + 3) + qCos(2*M_PI* fc/ fs) - 1;
-            fValue = 1-aValue;
 
-            for (int k = 0; k <= windowSize; k++){
-                h.append(qPow(fValue, k));
-            }
-
-            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &h, &aValue)) {
+            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &aValue)) {
                 qDebug() << f.errorString();
             }
 
-            double firstVal = smthdAmp1List[0];
-            for (int u = 1; u < windowSize; u++){
-                 smthdAmp1List.append(firstVal);
+            double frstFilt_A = smthdAmp1List[0];
+            for (int u = 1; u < Amp1List.size(); u++){
+                 smthdAmp1List.append(frstFilt_A);
             }
 
-            // Initialize parameters for phase recognition
-            maxIsLast = new bool;
-            //phase = new int;
+            phaseRecogActive = true;
+
+            double frst_t = TimeList[iteration-1];
+            double frst_A = Amp1List[iteration-1];
+            emit CreateChart(&frst_t, &frst_A, &frstFilt_A);
+
         }
 
         // Sleep for certain time to simulate dynamical reading
@@ -358,5 +314,6 @@ void SurfaceData::run(){
     // Emit signal to start addAvgData() to adjust staticChart layout and to add the data
     emit DataReadingFinished(&TimeList, &Amp1List, &Amp2List, colNum);
 }
+
 
 

@@ -30,6 +30,7 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include "qcustomplot.h"
+#include <QLayout>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -51,6 +52,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Updates phase in UI
     connect(rThread,SIGNAL(showCurrentPhase(int*)), this, SLOT(phaseChanged(int*)));
+
+    // Show initial cutoff frequency
+    QString fc_text = QString::number(rThread->fc) + " Hz";
+    ui->fc_label->setText(fc_text);
+    int start_fc = rThread->fc / 0.5 * 100;
+    qDebug() << start_fc;
+    ui->fc_slider->setSliderPosition(start_fc);
 }
 
 MainWindow::~MainWindow()
@@ -75,13 +83,13 @@ void MainWindow::onLnReadingFinished(QStringList SplitLn, int colNum)
     // Update amp1 value in UI
     ui->amp1Label_4->setText(amp1Val);
 
-    // Delete regex expression at the end if amp2 is last value
-    if(colNum == 3){
-        QString amp2Val = SplitLn[2];
+//    // Delete regex expression at the end if amp2 is last value
+//    if(colNum == 3){
+//        QString amp2Val = SplitLn[2];
 
-        // Update amp2 value in UI if there is one
-        ui->amp2Label_4->setText(amp2Val);
-    }
+//        // Update amp2 value in UI if there is one
+//        ui->amp2Label_4->setText(amp2Val);
+//    }
 }
 
 void MainWindow::onLoadingFinished(QStringList SplitLn, int colNum)
@@ -95,7 +103,7 @@ void MainWindow::onLoadingFinished(QStringList SplitLn, int colNum)
 
     // Delete regex expression at the end if amp1 is last value
     if(colNum == 2){
-        amp1ValAvg.remove(amp1ValAvg.size()-4, amp1ValAvg.size()-1);
+        amp1ValAvg.remove(amp1ValAvg.size()-2, amp1ValAvg.size()-1);
     }
 
     // Update amp1 value in UI
@@ -108,6 +116,51 @@ void MainWindow::onLoadingFinished(QStringList SplitLn, int colNum)
         // Update amp2 value in UI if there is one
         ui->amp2LabelAvg_4->setText(amp2ValAvg);
     }
+}
+
+void MainWindow::on_CreateChart(double* frst_t, double* frst_A, double* frstFilt_A)
+{
+    // Create dialog window to show real time and planning CT data
+    chartDialog = new ChartDialog(this);        // Define new QDialog object; "this" points at MainWindow as a parent
+    chartDialog->setDisabled(false);            // enables input events
+
+    // Create and adjust dynamic chart
+    dynamicChart = new DynamicChart(0, 0, rThread, frst_t, frst_A);     // QChart object; starts constructor of DynamicChart
+    dynamicChart->setTitle("Measured Data");
+    dynamicChart->setTitleFont(QFont("sans", 10, QFont::Bold));
+    dynamicChart->legend()->hide();
+    dynamicChart->setAnimationOptions(QChart::AllAnimations);      // Enable 'AllAnimations' for the chart
+
+    // Create QChartView widget which displays the dynamic chart
+    QChartView *dynamicChartView = new QChartView(dynamicChart);
+    dynamicChartView->setRenderHint(QPainter::Antialiasing);       // Enable render hint 'Antialiasing' for chart view
+
+    // If a new line was read the data series of the graph will be updated and x axis will be scrolled if necessary
+    QObject::connect(rThread, SIGNAL(LnReadingFinished(QStringList, int)), dynamicChart, SLOT(addDataPoint(QStringList, int)));
+
+    //---------------------------------------------------------------------------------------------------------
+    // Plot filtered data
+    filterChart = new DynamicChart(0, 0, rThread, frst_t, frstFilt_A);
+    filterChart->setTitle("Filtered Data");
+    filterChart->setTitleFont(QFont("sans", 10, QFont::Bold));
+    filterChart->legend()->hide();
+    filterChart->setAnimationOptions(QChart::AllAnimations);
+    QChartView *filterChartView = new QChartView(filterChart);
+    filterChartView->setRenderHint(QPainter::Antialiasing);
+    QObject::connect(rThread, SIGNAL(FilteringFinished(double, double)), filterChart, SLOT(addFilteredDataPoint(double, double)));
+    connect(this,SIGNAL(adjustYaxis(double*)), filterChart, SLOT(on_adjustYaxis(double*)));
+    //---------------------------------------------------------------------------------------------------------
+
+    // Add static and dynamic chart into one dialog window
+    chartDialog->setLayout(new QVBoxLayout());
+    chartDialog->layout()->addWidget(dynamicChartView);     // add dynamic chartView into the layout
+    chartDialog->layout()->addWidget(filterChartView);      // add filter chartView
+    chartDialog->layout()->addWidget(staticChart);      // add static chartView
+    chartDialog->resize(1000, 750);
+
+
+    // Show dialog window
+    chartDialog->show();
 }
 
 
@@ -123,29 +176,7 @@ void MainWindow::on_StartReadingButton_4_clicked()
     rThread->filtering = true;                          // filter data in real time and enable phase recognition
     rThread->start();                                   // starts SurfaceData::run() for rThread
 
-    // Create dialog window to show real time and planning CT data
-    chartDialog = new ChartDialog(this);        // Define new QDialog object; "this" points at MainWindow as a parent
-    chartDialog->setDisabled(false);            // enables input events
-
-    // Create and adjust dynamic chart
-    dynamicChart = new DynamicChart(0, 0, rThread);     // QChart object; starts constructor of DynamicChart
-    dynamicChart->setTitle("Real time data");
-    dynamicChart->setFont(QFont("sans", 10, QFont::Bold));
-    dynamicChart->legend()->hide();
-    dynamicChart->setAnimationOptions(QChart::AllAnimations);      // Enable 'AllAnimations' for the chart
-
-    // Create QChartView widget which displays the dynamic chart
-    QChartView *dynamicChartView = new QChartView(dynamicChart);
-    dynamicChartView->setRenderHint(QPainter::Antialiasing);       // Enable render hint 'Antialiasing' for chart view
-
-    // Add static and dynamic chart into one dialog window
-    chartDialog->setLayout(new QVBoxLayout());
-    chartDialog->layout()->addWidget(dynamicChartView);     // add dynamic chartView into the layout
-    chartDialog->layout()->addWidget(staticChart);      // add static chartView
-    chartDialog->resize(1100, 500);
-
-    // Show dialog window
-    chartDialog->show();
+    connect(rThread,SIGNAL(CreateChart(double*, double*, double*)), this, SLOT(on_CreateChart(double*, double*, double*)));
 }
 
 void MainWindow::phaseChanged(int* phase)
@@ -164,7 +195,10 @@ void MainWindow::on_LoadingButton_4_clicked()
 {    
     // Create chart for UI showing data from planning CT
     staticChart = new QCustomPlot();
-    staticChart->setFixedSize(700,210);
+    staticChart->setFixedSize(950,210);
+
+    // Set points as decimal separator
+    staticChart->setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
 
     // Add data from file to chart as soon as reading is finished
     QObject::connect(lThread, SIGNAL(DataReadingFinished(QList<double>*, QList<double>*, QList<double>*, int)),
@@ -210,7 +244,7 @@ void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListP
     // Adjust time values
     double qStart = StatTimeVec[0];
     for(int i = 0; i<StatTimeVec.size(); ++i){
-        StatTimeVec[i] = (StatTimeVec[i]-qStart)/1000;      // [t] = 1 ms -> 1 s & t starts with 0
+        StatTimeVec[i] = (StatTimeVec[i]-qStart);      // t starts with 0
     }
 
     // Add data to graph
@@ -240,7 +274,7 @@ void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListP
     // Adjust Axes
     staticChart->xAxis->setLabel("t [s]");
     staticChart->yAxis->setLabel("Amp. [mm]");
-    staticChart->xAxis->setRange(0, xStatAxisRange);
+    staticChart->xAxis->setRange(0.0, xStatAxisRange);
     staticChart->xAxis->setLabelFont(QFont("sans",8, QFont::Bold));
     staticChart->yAxis->setRange(amp1Min-(amp1Max-amp1Min)*0.15, amp1Max+(amp1Max-amp1Min)*0.3);
     staticChart->yAxis->setLabelFont(QFont("sans",8, QFont::Bold));
@@ -383,43 +417,45 @@ void MainWindow::on_StartPhaseRecognitionButton_clicked()
 {
 
     // Find all extrema in data that have been measured until now and save them into max and min list
-    extremum_search(&rThread->smthdAmp1List, &rThread->maxIndList, &rThread->minIndList, rThread->maxIsLast);
-
-    // Determine last 4 extrema for calculations of phase borders
-    if (rThread->maxIsLast){
-        rThread->peak1Ind = rThread->maxIndList.rbegin()[0];
-        rThread->peak2Ind = rThread->minIndList.rbegin()[0];
-        rThread->peak3Ind = rThread->maxIndList.rbegin()[1];
-        rThread->peak4Ind = rThread->minIndList.rbegin()[1];
-
-    }
-    else{
-        rThread->peak1Ind = rThread->minIndList.rbegin()[0];
-        rThread->peak2Ind = rThread->maxIndList.rbegin()[0];
-        rThread->peak3Ind = rThread->minIndList.rbegin()[1];
-        rThread->peak4Ind = rThread->maxIndList.rbegin()[1];
-    }
+    extremum_search(&rThread->smthdAmp1List, &rThread->maxIndList, &rThread->minIndList, &rThread->maxIsLast);
+    rThread->newMaxInd = rThread->maxIndList.rbegin()[0];
+    rThread->oldMaxInd = rThread->maxIndList.rbegin()[1];
+    rThread->lastMinInd = rThread->minIndList.rbegin()[0];
 
     // Find time difference from last peak to each of the 5 phases for both half breathing cycles (PhaseBorders)
-    rThread->BorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    rThread->globalBorderTimes = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    rThread->calcPhaseBordersByTime(&rThread->smthdAmp1List, &rThread->TimeList, &rThread->BorderTimes,
-                              &rThread->globalBorderTimes, &rThread->peak4Ind, &rThread->peak3Ind, &rThread->peak2Ind);
-    rThread->calcPhaseBordersByTime(&rThread->smthdAmp1List, &rThread->TimeList, &rThread->BorderTimes,
-                              &rThread->globalBorderTimes, &rThread->peak3Ind, &rThread->peak2Ind, &rThread->peak1Ind);
+    rThread->T = rThread->TimeList[rThread->newMaxInd] - rThread->TimeList[rThread->oldMaxInd];
+    rThread->dT = rThread->T /10.0;
 
-    rThread->calcPhaseBordersByAmp(&rThread->smthdAmp1List, &rThread->BorderAmps,
-                              &rThread->globalBorderAmps, &rThread->peak3Ind, &rThread->peak2Ind, &rThread->peak1Ind);
+    rThread->maxIsLast = true;
 
-    // Display initial phase separation at beginning of phase recognition
-    qDebug() << "phase " << 1 << " in [" << rThread->TimeList[rThread->peak1Ind] << ", " << rThread->globalBorderTimes[0] << "]";
-    for (int r = 1; r < rThread->globalBorderTimes.size(); r++){
-        qDebug() << "phase " << r+1 << " in [" << rThread->globalBorderTimes[r-1] << ", " << rThread->globalBorderTimes[r] << "]";
-    }
-
-    rThread->prReady = true;
+    // Parameters are set -> Phase recognition can be started
+    rThread->extrDetectionActive = true;
 }
 
 
 
+void MainWindow::on_fc_slider_sliderMoved(int position)
+{
+    double new_fc = position * 0.5 / 100.0;
+    qDebug() << "value: " << position << "    new_fc: " << new_fc;
+
+    int N = rThread->Amp1List.size();
+    double new_Amp = 0.0;
+    double convProd = 1.0;
+
+    rThread->aValue = qSqrt( qPow( qCos(2*M_PI* new_fc/ rThread->fs), 2) - 4*qCos(2*M_PI* new_fc/ rThread->fs) + 3)
+            + qCos(2*M_PI* new_fc/ rThread->fs) - 1;
+
+    for(int convInd = 0; convInd < rThread->windowSize; ++convInd){
+        convProd = rThread->aValue * (rThread->Amp1List[N-1-convInd] * qPow((1-rThread->aValue), convInd));
+        new_Amp = convProd+new_Amp;
+    }
+
+    emit adjustYaxis(&new_Amp);
+
+    QString fc_text = QString::number(new_fc);
+    fc_text.remove(fc_text.size()-1, fc_text.size()-1);
+    fc_text = fc_text + " Hz";
+    ui->fc_label->setText(fc_text);
+}
 

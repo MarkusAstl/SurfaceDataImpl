@@ -21,20 +21,26 @@ public:
     QList<int> maxIndList;
     QList<int> minIndList;
 
-    int peak1Ind;
-    int peak2Ind;
-    int peak3Ind;
-    int peak4Ind;
+    int oldMaxInd;
+    int newMaxInd;
 
+    double T;
+    double dT;
+    double T_old;
     int phase;
     double dt;
     QList<double> BorderTimes;
     QList<double> globalBorderTimes;
-    bool* maxIsLast;
-    bool prReady;
+    int lastMinInd;
+    int lastMaxInd;
+    bool maxIsLast;
+    bool extrDetectionActive;
+    bool phaseRecogActive;
 
-    int windowSize = 9;
-    double fc = 0.333;
+    int windowSize = 7;
+    double fc = 0.33;
+    double fs;
+    double T_planning = 3.5;
     double aValue;
     double fValue;
     QList<double> h;    // convolution function h for filtering
@@ -44,15 +50,17 @@ public:
     int sleepingTime;  
 
 public slots:
-    void calcPhaseBordersByTime(QList<double>*, QList<double>*, QList<double>*, QList<double>*, int*, int*, int*);
-    void phaseRecognition(bool*, double*, QList<double>*, int*);
-    bool monotonyChanged(double*, double*, double*, bool*);
+    void phaseRecognition(double*, double*, double*, int*, bool*, bool*);
+    bool newMaxDetected(QList<double>*, bool*, int*, int*);
+    bool checkBreathCycleDur(double*, double*, double*);
 
 signals:
     void LnReadingFinished(QStringList, int);
     void DataReadingFinished(QList<double>*, QList<double>*, QList<double>*, int);
+    void FilteringFinished(double, double);
     void monotonyCheckDone(QList<double>*, QList<double>*, int*, int*, int*);
     void showCurrentPhase(int*);
+    void CreateChart(double*, double*, double*);
 };
 
 #endif // SURFACEDATA_H

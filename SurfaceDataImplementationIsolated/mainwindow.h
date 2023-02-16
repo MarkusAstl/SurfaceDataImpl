@@ -27,20 +27,22 @@ public:
     SurfaceData *lThread;
     SurfaceData *prThread;
 
-    QString path1 = "SurfaceData/BruMi_4D_CT_dummy.csv";                          // two columns
+    QString path1 = "SurfaceData/Sarah_4D_CT_dummy2.csv";                          // two columns
     QString path2 = "SurfaceData/2021_11_30_Sarah_RespSignal_20211130_171956_clean.csv";    // three columns
 
     ChartDialog *chartDialog;
     DynamicChart *dynamicChart;
+    DynamicChart *filterChart;
     QCustomPlot *staticChart;
 
-    int dtSurfData = 300;
+    int dtSurfData = 75;
 
 public slots:
     void onLnReadingFinished(QStringList, int);
     void onLoadingFinished(QStringList, int);
     void addAvgData(QList<double>*, QList<double>*, QList<double>*, int);
     void phaseChanged(int*);
+    void on_CreateChart(double*, double*, double*);
 
 private:
     Ui::MainWindow *ui;
@@ -52,5 +54,9 @@ private slots:
     void on_StopLoadingButton_4_clicked();
     void on_StartPhaseRecognitionButton_clicked();
     void extremum_search(QList<double>*, QList<int>*, QList<int>*, bool*);
+    void on_fc_slider_sliderMoved(int position);
+
+signals:
+    void adjustYaxis(double*);
 };
 #endif // MAINWINDOW_H

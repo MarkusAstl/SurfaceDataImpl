@@ -24,11 +24,11 @@ ChartDialog::~ChartDialog()
     delete ui;
 }
 
-DynamicChart::DynamicChart(QGraphicsItem *parent, Qt::WindowFlags wFlags, SurfaceData *rThread) :
+DynamicChart::DynamicChart(QGraphicsItem *parent, Qt::WindowFlags wFlags, SurfaceData *rThread, double *frst_t, double *frst_A) :
     QChart(QChart::ChartTypeCartesian, parent, wFlags)
 {
-    // If a new line was read the data series of the graph will be updated and x axis will be scrolled if necessary
-    QObject::connect(rThread, SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(addDataPoint(QStringList, int)));
+//    // If a new line was read the data series of the graph will be updated and x axis will be scrolled if necessary
+//    QObject::connect(rThread, SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(addDataPoint(QStringList, int)));
 
     //dataSeries = NULL;
 
@@ -41,20 +41,23 @@ DynamicChart::DynamicChart(QGraphicsItem *parent, Qt::WindowFlags wFlags, Surfac
     dataSeries->setPen(drawPen);                         // apply defined QPen to spline chart
 
     // Set axis
-    xVal = 126;         // [t] = 1 s
-    yVal = 53.3794;
-    dataSeries->append(xVal, yVal);
+//    xVal = 126;         // [t] = 1 s
+//    yVal = 53.3794;
+    QPointF frst_point(*frst_t, *frst_A);
+    dataSeries->append(frst_point);
     axisX = new QtCharts::QValueAxis;
     axisY = new QtCharts::QValueAxis;
     axisX->setTickCount(16);                      // number of grid lines (one value for every grid line)
     addAxis(axisX, Qt::AlignBottom);
     addAxis(axisY, Qt::AlignLeft);
     xAxisRange = 20;
-    axisX->setRange(xVal, xVal + xAxisRange);
-    axisY->setRange(50, 65);
+    yAxisRange = 10;
+    axisX->setRange(*frst_t, *frst_t + xAxisRange);
+    axisY->setRange(*frst_A - yAxisRange*0.5, *frst_A + yAxisRange*0.5);
     axisX->setTitleText("t [s]");
     axisY->setTitleText("Amp. [mm]");
-    xAxisStart = xVal;
+    xAxisStart = *frst_t;
+    yAxisMiddle = *frst_A;
 
     // Add series to chart
     addSeries(dataSeries);
@@ -90,4 +93,21 @@ void DynamicChart::addDataPoint(QStringList SplitLn, int colNum)
     dataSeries->append(m_point);
 }
 
+void DynamicChart::addFilteredDataPoint(double t, double A)
+{
+    // Shift x axis range if data exceeds graph
+    if(t >= xAxisStart + xAxisRange){
+        scroll(plotArea().width()*0.5, 0);
+        xAxisStart += xAxisRange/2;
+    }
 
+    // Add point to plotting series
+    QPointF m_point(t, A);
+    dataSeries->append(m_point);
+}
+
+
+void DynamicChart::on_adjustYaxis(double* newAmp)
+{
+    axisY->setRange(*newAmp - yAxisRange*0.5, *newAmp + yAxisRange*0.5);
+}

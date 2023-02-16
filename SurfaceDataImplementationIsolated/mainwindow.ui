@@ -14,13 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>359</width>
-      <height>232</height>
+      <x>12</x>
+      <y>12</y>
+      <width>411</width>
+      <height>236</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -228,20 +228,58 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="StartPhaseRecognitionButton">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="StartPhaseRecognitionButton">
+           <property name="text">
+            <string>Start Phase Recognition</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="phaseLabel">
+           <property name="text">
+            <string>Phase: </string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
          <property name="text">
-          <string>Start Phase Recognition</string>
+          <string>Set Cutoff Frequency</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="fc_label">
+         <property name="text">
+          <string>0.00 Hz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="fc_slider">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="sliderPosition">
+          <number>0</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
       </layout>
-     </item>
-     <item alignment="Qt::AlignHCenter">
-      <widget class="QLabel" name="phaseLabel">
-       <property name="text">
-        <string>Phase: </string>
-       </property>
-      </widget>
      </item>
     </layout>
    </widget>

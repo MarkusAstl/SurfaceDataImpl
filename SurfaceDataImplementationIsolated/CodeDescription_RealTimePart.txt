@@ -1,0 +1,59 @@
+QT - One iteration
+
+1) readOneLn(): Split one line of file f into its components -> QStringList SplitLn
+
+(2) emit LnReadingFinished(): SplitLn and ColNum are sent to MainWindow to show value in user interface
+
+3) saveValsToList(): Convert strings from SplitLn into doubles and save values to TimeList and Amp1List. Also convert time value from ms to s
+
+4) filterNewDatapoint(): Take newest datapoint, filter it and add it to smthdAmp1List
+
+(5) emit FilteringFinished(): add new datapoint to chart and scroll x-axis if necessary
+
+6) newMaxDetected(): Check if new max appeared by investigating the monotony of the last 3 datapoints and checking if minimum amplitude difference between last min and this potential new
+   max is fulfilled.
+	
+	newMaxDetected = true:
+	6.1) Calculate new cycle duration
+	6.2) checkBreathCycleDur(): Check if breath cycle duration is in valid interval and if necessary stop phase recognition by setting phaseRecogActive to false
+	
+		checkBreathCycleDuration = false:
+		6.2.1) phase = 0;
+		
+		checkBreathCycleDuration = true:
+		6.2.2) Calculate new phase duration dT
+		6.2.3) Move new max to the right by the calculated max time shift
+
+7) phaseRecognition(): If phaseRecogActive is true determine current phase
+
+(8) emit showCurrentPhase(): Send phase to user interface
+
+
+
+
+Open tasks:
+
+-) Alles mit Amp2 rauslöschen. In saveValsToList() vielleicht switch rausnehmen und davon ausgehen, dass immer 2 Werte vorhanden sind.
+-) Für reading und loading jeweils einen extra thread definieren.
+-) Das Scrollen in beiden real time charts im selben if statement durchführen und nicht pro Chart eines abchecken.
+-) Kann in newMaxDetected() das "*maxIsLast = true;" in die elseif Bedingung gepackt werden, damit bei Atemanhalten keine falsche Phasenbedingung entsteht?
+-) Verstehen, ob in newMaxDetected() der Differenz Faktor von 0.1 erhöht werden kann. 
+-) Vielleicht ab einem gewissen Punkt in while loop die tasks in neue Threads aufteilen, wenn diese nicht mehr voneinander abhängig sind? Hier wäre mutex.lock() sehr wichtig!
+-) Soll ich "bool phaseRecogActive" in checkBreathCycleDur() einfach im header definieren?
+
+
+Fragen Andreas:
+
+Derzeit erledige ich das ganze Signal Processing mit einer while loop in einem einzigen Thread. Wäre es besser alles im mainwindow zu definieren und für jeden neuen Datenpunkt
+einen neuen Thread mit der gleichen Funktion (lesen, filtern, auswerten) zu öffnen? Oder macht das keinen Unterschied?
+
+Wie kann ich das umsetzen, dass sobald eine gewisse Bedingung erfüllt ist ein Befehl ausgeführt werden soll ohne dass dabei in jeder loop ein if statement geprüft wird?
+Stichwort filtering-bool und extrDetectionActive-bool
+
+Ist es zeitlich ein Unterschied, wenn ich in jeder loop schreibe:
+bool newMax = false
+oder wenn ich im header file bool newMax definiere und dann nur schreibe:
+newMax = false
+?
+
+Gibt es eine bessere Lösung für die Funktion phaseRecognition()? Soll ich vielleicht 10 Threads zugleich starten?

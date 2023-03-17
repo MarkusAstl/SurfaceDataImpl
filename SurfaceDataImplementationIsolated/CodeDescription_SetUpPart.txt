@@ -1,0 +1,25 @@
+QT - Set Up for Phase Recognition
+
+1) Read csv file
+
+2) Find line where data starts and determine number of columns in file
+
+3) Check if number of columns is permissible
+
+4) readOneLn(): Split one line of file f into its components -> QStringList SplitLn
+
+(5) emit LnReadingFinished(): SplitLn and ColNum are sent to MainWindow to show value in user interface
+
+6) saveValsToList(): Convert strings from SplitLn into doubles and save values to TimeList and Amp1List. Also convert time value from ms to s
+
+----- iteration = windowSize ---------------------
+
+7) Calculate parameters for exponential moving average filter
+
+8) Add all so far reat Amp1 values to smthdAmp1List to have n=windowSize values for starting filtering
+
+9) Filter first datapoint
+
+9) Define first time and amp1 value for setting up chart axis
+
+10) emit CreateChart(): Create whole data chart

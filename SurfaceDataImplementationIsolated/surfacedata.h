@@ -2,6 +2,8 @@
 #define SURFACEDATA_H
 
 #include <QThread>
+#include <QFile>
+#include <QTextStream>
 
 class SurfaceData : public QThread
 {
@@ -17,6 +19,8 @@ public:
     QList<double> TimeList;
     QList<double> Amp1List;
     QList<double> Amp2List;
+    QVector<int> PhaseList;
+    QVector<int> IntervalPhaseList;
 
     QList<int> maxIndList;
     QList<int> minIndList;
@@ -24,10 +28,16 @@ public:
     int oldMaxInd;
     int newMaxInd;
 
+    double filterShift;
+    double correctedNewMaxTime;
+
+    QFile fout;
+    QTextStream stream;
+
     double T;
     double dT;
     double T_old;
-    int phase;
+    int phase = 0;
     double dt;
     QList<double> BorderTimes;
     QList<double> globalBorderTimes;
@@ -37,7 +47,7 @@ public:
     bool extrDetectionActive;
     bool phaseRecogActive;
 
-    int windowSize = 7;
+    int windowSize = 5;
     double fc = 0.33;
     double fs;
     double T_planning = 3.5;
@@ -52,7 +62,7 @@ public:
 public slots:
     void phaseRecognition(double*, double*, double*, int*, bool*, bool*);
     bool newMaxDetected(QList<double>*, bool*, int*, int*);
-    bool checkBreathCycleDur(double*, double*, double*);
+    bool checkBreathCycleDur(double*, double*, double*, bool*);
 
 signals:
     void LnReadingFinished(QStringList, int);

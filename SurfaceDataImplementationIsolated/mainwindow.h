@@ -27,15 +27,15 @@ public:
     SurfaceData *lThread;
     SurfaceData *prThread;
 
-    QString path1 = "SurfaceData/Sarah_4D_CT_dummy2.csv";                          // two columns
-    QString path2 = "SurfaceData/2021_11_30_Sarah_RespSignal_20211130_171956_clean.csv";    // three columns
+    QString path1 = "Sarah_4D_CT_dummy2";                          // two columns
+    QString path2 = "2021_11_30_Andi_RespSignal_20211130_171611_clean";    // three columns
 
     ChartDialog *chartDialog;
     DynamicChart *dynamicChart;
     DynamicChart *filterChart;
     QCustomPlot *staticChart;
 
-    int dtSurfData = 75;
+    int dtSurfData = 50; // 75
 
 public slots:
     void onLnReadingFinished(QStringList, int);

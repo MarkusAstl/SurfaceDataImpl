@@ -1,0 +1,11 @@
+QT - Initialize Phase Recognition
+
+1) extremum_search(): Find all the extrema in the so far read in data and save the corresponding indices
+
+2) Find last breath cycle duration and phase duration
+
+3) Apply simple moving average filter to so far read in data and save smoothed values into smthdMovAvgList
+
+4) Apply extremum_search() to smthdMovAvgList
+
+5) Calculate mean of last three max shifts between data of the two different smoothing methods

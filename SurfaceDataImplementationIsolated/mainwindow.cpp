@@ -56,8 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Show initial cutoff frequency
     QString fc_text = QString::number(rThread->fc) + " Hz";
     ui->fc_label->setText(fc_text);
-    int start_fc = rThread->fc / 0.5 * 100;
-    qDebug() << start_fc;
+    int start_fc = rThread->fc * 100;
     ui->fc_slider->setSliderPosition(start_fc);
 }
 
@@ -188,7 +187,9 @@ void MainWindow::phaseChanged(int* phase)
 void MainWindow::on_StopReadingButton_4_clicked()
 {
     // Stop reading of real time data
-    rThread->Stop = true;
+    //rThread->Stop = true; -> old code
+    rThread->fout.close();
+    rThread->terminate();
 }
 
 void MainWindow::on_LoadingButton_4_clicked()
@@ -218,7 +219,7 @@ void MainWindow::on_LoadingButton_4_clicked()
 void MainWindow::on_StopLoadingButton_4_clicked()
 {
     // Stop reading of planning CT data
-    lThread->Stop = true;
+    lThread->terminate();
 }
 
 void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListPtr, QList<double>* Amp2ListPtr, int colNum)
@@ -416,29 +417,64 @@ void MainWindow::extremum_search(QList<double>* data, QList<int>* max_ind_list, 
 void MainWindow::on_StartPhaseRecognitionButton_clicked()
 {
 
+    // -------------PREPARE FOR PHASE RECOGNITION----------------------------------------------------------------------
+
     // Find all extrema in data that have been measured until now and save them into max and min list
     extremum_search(&rThread->smthdAmp1List, &rThread->maxIndList, &rThread->minIndList, &rThread->maxIsLast);
     rThread->newMaxInd = rThread->maxIndList.rbegin()[0];
     rThread->oldMaxInd = rThread->maxIndList.rbegin()[1];
     rThread->lastMinInd = rThread->minIndList.rbegin()[0];
 
-    // Find time difference from last peak to each of the 5 phases for both half breathing cycles (PhaseBorders)
+    // Find last breath cycle duration and phase duration
     rThread->T = rThread->TimeList[rThread->newMaxInd] - rThread->TimeList[rThread->oldMaxInd];
     rThread->dT = rThread->T /10.0;
 
     rThread->maxIsLast = true;
 
+    // -------------CALCULATE X AXIS SHIFT CAUSED BY FILTERING---------------------------------------------------------
+
+    // Use Moving Average Filter to smooth data
+    int halfWindowSize = rThread->windowSize / 2;
+    double intervalMean;
+    QList<double> smthdMovAvgList = rThread->Amp1List.mid(0, halfWindowSize);
+    for(int i = halfWindowSize; i < rThread->Amp1List.size()-halfWindowSize; i++){
+        intervalMean = 0;
+        for(int j = i - halfWindowSize; j <= i + halfWindowSize; j++){
+            intervalMean = intervalMean + rThread->Amp1List[j];
+        }
+        smthdMovAvgList.append(intervalMean / rThread->windowSize);
+    }
+
+    // Find last maxima
+    QList<int> MovAvgMaxIndList;
+    QList<int> MovAvgMinIndList;
+    bool MovAvgMaxIsLast;
+    extremum_search(&smthdMovAvgList, &MovAvgMaxIndList, &MovAvgMinIndList, &MovAvgMaxIsLast);
+
+    // Calculate shift
+    double shiftSum = 0;
+    double diff;
+    for (int l = 0; l < 3; l++){
+        diff = qFabs(smthdMovAvgList[MovAvgMaxIndList.rbegin()[l]] - rThread->smthdAmp1List[rThread->maxIndList.rbegin()[l]]);
+        shiftSum = shiftSum + diff;
+    }
+    rThread->filterShift = shiftSum / 3.0;
+    rThread->correctedNewMaxTime = rThread->TimeList[rThread->newMaxInd] - rThread->filterShift;
+    //qDebug() << "Filter shift = " << rThread->filterShift << " s";
+
+
+    // -------------START PHASE RECOGNITION----------------------------------------------------------------------------
+
     // Parameters are set -> Phase recognition can be started
     rThread->extrDetectionActive = true;
+    chartDialog->reject();
 }
 
 
 
 void MainWindow::on_fc_slider_sliderMoved(int position)
 {
-    double new_fc = position * 0.5 / 100.0;
-    qDebug() << "value: " << position << "    new_fc: " << new_fc;
-
+    double new_fc = position / 100.0;
     int N = rThread->Amp1List.size();
     double new_Amp = 0.0;
     double convProd = 1.0;
@@ -451,10 +487,9 @@ void MainWindow::on_fc_slider_sliderMoved(int position)
         new_Amp = convProd+new_Amp;
     }
 
-    emit adjustYaxis(&new_Amp);
+    //emit adjustYaxis(&new_Amp);
 
-    QString fc_text = QString::number(new_fc);
-    fc_text.remove(fc_text.size()-1, fc_text.size()-1);
+    QString fc_text = QString::number(new_fc, 'f', 2);
     fc_text = fc_text + " Hz";
     ui->fc_label->setText(fc_text);
 }

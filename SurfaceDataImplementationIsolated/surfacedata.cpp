@@ -15,6 +15,8 @@
 #include <iostream>
 #include <new>
 
+#include <fstream>
+
 #include <chrono>
 #include <thread>
 
@@ -38,19 +40,12 @@ QStringList readOneLn(QFile &f){
     return SplitLn;
 }
 
-bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, int *windowSize, double *aValue){
+bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, double *aValue){
     // Low pass filter construncted with convolution using a left sided exponential moving avergage filter
 
     int N = Amp1List->size();
-    double convSum = 0.0;
-    double convProd = 1.0;
-
-    for(int convInd = 0; convInd < *windowSize; ++convInd){
-        convProd = *aValue * (Amp1List->at(N-1-convInd) * qPow((1-*aValue), convInd));
-        convSum = convProd+convSum;
-    }
-
-    smthdAmp1List->append(convSum);
+    double newSmthdVal = *aValue * Amp1List->at(N-1) + (1 - *aValue) * smthdAmp1List->rbegin()[0];
+    smthdAmp1List->append(newSmthdVal);
     return true;
 }
 
@@ -58,7 +53,6 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
 
     // Save values of one line into corresponding lists
     bool ok;
-
     for (int colInd = 0; colInd < colNum; ++colInd) {
         double doubleVal = SplitLn[colInd].toDouble(&ok);
 
@@ -84,43 +78,66 @@ bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<dou
 
 void SurfaceData::phaseRecognition(double* t, double* t_lastMax, double* dT, int* phase, bool* extrDetectionActive, bool* phaseRecogActive)
 {
-
-
     // Determine phase
-    if (*t < *t_lastMax + *dT){
-        *phase = 1;
+    double dt = *t - *t_lastMax;
+    *phase = int(dt/ *dT) + 1;
+
+    if (*phase > 10) {
+        if (*phase >= 14){
+            *phase = 0;                  // Fallback if t < t_lastMax
+            *phaseRecogActive = false;
+        }
+        else{
+            *phase = *phase - 10;       // Fallback if t > 13*dT
+        }
     }
-    else if(*t >= *t_lastMax + *dT * 1 && *t < *t_lastMax + *dT * 2){
-        *phase = 2;
-    }
-    else if(*t >= *t_lastMax + *dT * 2 && *t < *t_lastMax + *dT * 3){
-        *phase = 3;
-    }
-    else if(*t >= *t_lastMax + *dT * 3 && *t < *t_lastMax + *dT * 4){
-        *phase = 4;
-    }
-    else if(*t >= *t_lastMax + *dT * 4 && *t < *t_lastMax + *dT * 5){
-        *phase = 5;
-    }
-    else if(*t >= *t_lastMax + *dT * 5 && *t < *t_lastMax + *dT * 6){
-        *phase = 6;
-    }
-    else if(*t >= *t_lastMax + *dT * 6 && *t < *t_lastMax + *dT * 7){
-        *phase = 7;
-    }
-    else if(*t >= *t_lastMax + *dT * 7 && *t < *t_lastMax + *dT * 8){
-        *phase = 8;
-    }
-    else if(*t >= *t_lastMax + *dT * 8 && *t < *t_lastMax + *dT * 9){
-        *phase = 9;
-    }
-    else if(*t >= *t_lastMax + *dT * 9 && *t < *t_lastMax + *dT * 12){
-        *phase = 10;
-    }
-    else{
-        *phase = 0;                  // Fallback if t > 12*dT or if t < t_lastMax
-        *phaseRecogActive = false;
-    }
+
+
+    // Old Phase Recognition
+//    // Determine phase
+//    if (*t < *t_lastMax + *dT){
+//        *phase = 1;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 1 && *t < *t_lastMax + *dT * 2){
+//        *phase = 2;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 2 && *t < *t_lastMax + *dT * 3){
+//        *phase = 3;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 3 && *t < *t_lastMax + *dT * 4){
+//        *phase = 4;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 4 && *t < *t_lastMax + *dT * 5){
+//        *phase = 5;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 5 && *t < *t_lastMax + *dT * 6){
+//        *phase = 6;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 6 && *t < *t_lastMax + *dT * 7){
+//        *phase = 7;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 7 && *t < *t_lastMax + *dT * 8){
+//        *phase = 8;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 8 && *t < *t_lastMax + *dT * 9){
+//        *phase = 9;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 9 && *t < *t_lastMax + *dT * 10){
+//        *phase = 10;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 10 && *t < *t_lastMax + *dT * 11){
+//        *phase = 1;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 11 && *t < *t_lastMax + *dT * 12){
+//        *phase = 2;
+//    }
+//    else if(*t >= *t_lastMax + *dT * 12 && *t < *t_lastMax + *dT * 13){
+//        *phase = 3;
+//    }
+//    else{
+//        *phase = 0;                  // Fallback if t > 13*dT or if t < t_lastMax
+//        *phaseRecogActive = false;
+//    }
 }
 
 
@@ -144,16 +161,15 @@ bool SurfaceData::newMaxDetected(QList<double>* AmpList, bool* maxIsLast, int* l
     return newMax;
 }
 
-bool SurfaceData::checkBreathCycleDur(double* T, double* T_planning, double* T_old) {
-    bool phaseRecogActive;
+bool SurfaceData::checkBreathCycleDur(double* T, double* T_planning, double* T_old, bool* phaseRecogActive) {
     if (*T > 0.5 * *T_planning && *T >= 0.75* *T_old && *T <= 1.25 * *T_old){            // 0.5 because of hysteresis
-        phaseRecogActive = true;
+        *phaseRecogActive = true;
     }
     else {
-        phaseRecogActive = false;
-        qDebug() << "phaseRecogActive = false   " << *T << *T_planning * 0.5 << *T_old;
+        *phaseRecogActive = false;
+        //qDebug() << "phaseRecogActive = false   " << *T << *T_planning * 0.5 << *T_old;
     }
-    return phaseRecogActive;
+    return *phaseRecogActive;
 }
 
 
@@ -171,13 +187,11 @@ void SurfaceData::run(){
 //        }
 
     // Open csv file
-    QFile f(this->path);
+    QFile f("SurfaceData/" + this->path + ".csv");
 
     if (!f.open(QIODevice::ReadOnly)) {
         qDebug() << f.errorString();
     }
-
-
 
     // Locate row of headers and determine number of columns
     int colNum = 0;
@@ -201,7 +215,6 @@ void SurfaceData::run(){
         }
     }
 
-
     // Check if number of columns is permissible
     if (colNum == 0) {
         qDebug() << f.errorString();
@@ -210,20 +223,20 @@ void SurfaceData::run(){
     // Iteration index for start of filtering
     int iteration = 0;
 
-    //
     extrDetectionActive = false;
     QMutex mutex;               // Lock lists and columns to avoid acessing same storage twice at the same time
 
 
     // Read data line by line
     while (!f.atEnd()){
+
         iteration = iteration + 1;
 
         // Read one line
         QStringList SplitLn = readOneLn(f);
 
         // Stop if stop button was clicked
-        if(this->Stop) break;
+        // if(this->Stop) break; -> old code
 
         // Emit signal to update time and ampl values in UI
         emit LnReadingFinished(SplitLn, colNum);
@@ -240,7 +253,7 @@ void SurfaceData::run(){
         if (iteration > windowSize && filtering){
 
             // Filter data
-            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &aValue)) {
+            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &aValue)) {
                 qDebug() << f.errorString();
             }
             emit FilteringFinished(TimeList.rbegin()[0], smthdAmp1List.rbegin()[0]);
@@ -261,55 +274,85 @@ void SurfaceData::run(){
                     T_old = T;
                     T = abs(TimeList[newMaxInd] - TimeList[oldMaxInd]);
 
-                    if (!checkBreathCycleDur(&T, &T_planning, &T_old)){
+                    if (!checkBreathCycleDur(&T, &T_planning, &T_old, &phaseRecogActive)){
                         // Fallback for significant changes in duration of breathing cycle
                         phase = 0;
-                        phaseRecogActive = false;
+                        //phaseRecogActive = false; -> old code
+
+                        //Only for validating phase recognition
+                        IntervalPhaseList.fill(0);
+                        PhaseList.append(IntervalPhaseList);
+                        IntervalPhaseList.clear();
                     }
                     else {
                         // Update phase borders
                         dT = T /10.0;
-                        phaseRecogActive = true;
+                        //qDebug() << "TimeList[newMaxInd]" << TimeList[newMaxInd] << "filterShift" << filterShift;
+                        correctedNewMaxTime = TimeList[newMaxInd] - filterShift;
+                        //phaseRecogActive = true; -> old code
+                        PhaseList.append(IntervalPhaseList);
+                        IntervalPhaseList.clear();
                     }
-
                     mutex.unlock();
                 }
 
                 // Do phase recognition
                 if (phaseRecogActive){
-                    phaseRecognition(&TimeList.rbegin()[0], &TimeList[newMaxInd], &dT, &phase, &extrDetectionActive, &phaseRecogActive);
+                    phaseRecognition(&TimeList.rbegin()[0], &correctedNewMaxTime, &dT, &phase, &extrDetectionActive, &phaseRecogActive);
                 }
 
                 emit showCurrentPhase(&phase);
             }
-        }
+        }        
 
         // Set parameters for filtering
         else if (iteration == windowSize){
             fs = 1/(TimeList[1]-TimeList[0]);
-            qDebug() << "dt = " << TimeList[1]-TimeList[0];
             aValue = qSqrt( qPow( qCos(2*M_PI* fc/ fs), 2) - 4*qCos(2*M_PI* fc/ fs) + 3) + qCos(2*M_PI* fc/ fs) - 1;
 
-            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &windowSize, &aValue)) {
-                qDebug() << f.errorString();
+            for (int u = 0; u < Amp1List.size(); u++){
+                 smthdAmp1List.append(Amp1List[u]);
             }
 
-            double frstFilt_A = smthdAmp1List[0];
-            for (int u = 1; u < Amp1List.size(); u++){
-                 smthdAmp1List.append(frstFilt_A);
+            if (!filterNewDatapoint(&Amp1List, &smthdAmp1List, &aValue)) {
+                qDebug() << f.errorString();
             }
 
             phaseRecogActive = true;
 
-            double frst_t = TimeList[iteration-1];
-            double frst_A = Amp1List[iteration-1];
-            emit CreateChart(&frst_t, &frst_A, &frstFilt_A);
-
+            double frst_t = TimeList.rbegin()[0];
+            double frst_A = Amp1List.rbegin()[0];
+            emit CreateChart(&frst_t, &frst_A, &smthdAmp1List.rbegin()[0]);
         }
 
         // Sleep for certain time to simulate dynamical reading
         this->msleep(this->sleepingTime);
+
+        IntervalPhaseList.append(phase);
+        }
+
+    PhaseList.append(IntervalPhaseList);
+
+    // Create csv file for testing phase recognition
+    QString testOutputFileName = "SurfaceData/Measured/MEASURED_" + this->path + ".csv";
+    fout.setFileName(testOutputFileName);
+    if (!fout.open(QIODevice::WriteOnly|QIODevice::Text)) {
+        qDebug() << fout.errorString();
     }
+    QTextStream stream(&this->fout);
+
+    if (TimeList.size() == PhaseList.size()){
+        for(int i = 0; i < TimeList.size(); i++) {
+            stream << TimeList[i] << ',' << PhaseList[i] << "\n";
+        }
+    }
+    else{
+        qDebug() << "Writing csv file was not successful";
+        qDebug() << TimeList.size() << PhaseList.size();
+    }
+
+    this->fout.close();
+    qDebug() << "Output file is closed";
 
     // Emit signal to start addAvgData() to adjust staticChart layout and to add the data
     emit DataReadingFinished(&TimeList, &Amp1List, &Amp2List, colNum);

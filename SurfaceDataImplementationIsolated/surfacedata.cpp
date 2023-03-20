@@ -20,6 +20,8 @@
 #include <chrono>
 #include <thread>
 
+#include <QElapsedTimer>
+
 SurfaceData::SurfaceData(QObject *parent)   :
     QThread(parent)
 {
@@ -31,26 +33,21 @@ SurfaceData::SurfaceData(QObject *parent)   :
 
 
 QStringList readOneLn(QFile &f){
-
     // Seperate Qstring of one line into QStringList of its values
     QString separator(";");
     QString ln = f.readLine();
     QStringList SplitLn = ln.split(separator);
-
     return SplitLn;
 }
 
 bool filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, double *aValue){
     // Low pass filter construncted with convolution using a left sided exponential moving avergage filter
-
-    int N = Amp1List->size();
-    double newSmthdVal = *aValue * Amp1List->at(N-1) + (1 - *aValue) * smthdAmp1List->rbegin()[0];
+    double newSmthdVal = *aValue * Amp1List->rbegin()[0] + (1 - *aValue) * smthdAmp1List->rbegin()[0];
     smthdAmp1List->append(newSmthdVal);
     return true;
 }
 
 bool saveValsToLists(QList<double> &TimeList, QList<double> &Amp1List, QList<double> &Amp2List, QStringList &SplitLn, int &colNum){
-
     // Save values of one line into corresponding lists
     bool ok;
     for (int colInd = 0; colInd < colNum; ++colInd) {
@@ -176,15 +173,15 @@ bool SurfaceData::checkBreathCycleDur(double* T, double* T_planning, double* T_o
 
 void SurfaceData::run(){
 
-//    // Display files and directories in current folder
-//    QDir dir;
-//    foreach(QFileInfo item, dir.entryInfoList() )
-//        {
-//            if(item.isDir())
-//                qDebug() << "Dir: " << item.absoluteFilePath();
-//            if(item.isFile())
-//                qDebug() << "File: " << item.absoluteFilePath();
-//        }
+    // Display files and directories in current folder
+    QDir dir;
+    foreach(QFileInfo item, dir.entryInfoList() )
+        {
+            if(item.isDir())
+                qDebug() << "Dir: " << item.absoluteFilePath();
+            if(item.isFile())
+                qDebug() << "File: " << item.absoluteFilePath();
+        }
 
     // Open csv file
     QFile f("SurfaceData/" + this->path + ".csv");
@@ -229,6 +226,7 @@ void SurfaceData::run(){
 
     // Read data line by line
     while (!f.atEnd()){
+        timer.start();
 
         iteration = iteration + 1;
 
@@ -326,6 +324,8 @@ void SurfaceData::run(){
         }
 
         // Sleep for certain time to simulate dynamical reading
+        elapsed = timer.nsecsElapsed();
+        qDebug() << "runtime: " << elapsed << " ns";
         this->msleep(this->sleepingTime);
 
         IntervalPhaseList.append(phase);

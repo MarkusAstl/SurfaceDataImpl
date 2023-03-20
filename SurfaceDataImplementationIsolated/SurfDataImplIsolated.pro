@@ -28,9 +28,9 @@ FORMS += \
 
 win32 {
 
-win32: LIBS += -L$$PWD/../SurfDataImplIsolated/armadillo-10.2.0/Windows10/Debug/ -larmadillo
-INCLUDEPATH += $$PWD/../SurfDataImplIsolated/armadillo-10.2.0/include
-DEPENDPATH += $$PWD/../SurfDataImplIsolated/armadillo-10.2.0/include
+win32: LIBS += -L$$PWD/../PhaseRecognition_Masterarbeit/armadillo-10.2.0/Windows10/Debug/ -larmadillo
+INCLUDEPATH += $$PWD/../PhaseRecognition_Masterarbeit/armadillo-10.2.0/include
+DEPENDPATH += $$PWD/../PhaseRecognition_Masterarbeit/armadillo-10.2.0/include
 
 }
 

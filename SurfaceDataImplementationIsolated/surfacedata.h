@@ -4,6 +4,8 @@
 #include <QThread>
 #include <QFile>
 #include <QTextStream>
+#include <QVector>
+#include <QElapsedTimer>
 
 class SurfaceData : public QThread
 {
@@ -13,6 +15,9 @@ public:
 
     void run();
     bool Stop = false;
+
+    QElapsedTimer timer;
+    qint64 elapsed;
 
     bool filtering;
 

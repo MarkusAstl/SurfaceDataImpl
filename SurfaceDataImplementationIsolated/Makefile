@@ -220,6 +220,7 @@ Makefile: SurfDataImplIsolated.pro ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspec
 		..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\qt_config.prf \
 		..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\win32-msvc2015\qmake.conf \
 		..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\spec_post.prf \
+		.qmake.stash \
 		..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\exclusive_builds.prf \
 		..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\toolchain.prf \
 		..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\default_pre.prf \
@@ -398,6 +399,7 @@ Makefile: SurfDataImplIsolated.pro ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspec
 ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\qt_config.prf:
 ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\win32-msvc2015\qmake.conf:
 ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\spec_post.prf:
+.qmake.stash:
 ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\exclusive_builds.prf:
 ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\toolchain.prf:
 ..\..\..\..\Qt\Qt5.8.0\5.8\msvc2015_64\mkspecs\features\default_pre.prf:

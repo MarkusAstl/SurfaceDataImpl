@@ -6,253 +6,175 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>473</width>
-    <height>317</height>
+    <width>531</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>12</x>
-      <y>12</y>
-      <width>411</width>
-      <height>236</height>
+      <x>30</x>
+      <y>10</y>
+      <width>281</width>
+      <height>244</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <widget class="QLabel" name="Load_label">
+       <property name="text">
+        <string> Load avg. Surface Data (Planning CT)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_15">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_12">
-           <item>
-            <widget class="QLabel" name="ReadLabel_4">
-             <property name="text">
-              <string>        Read Surface Data
-             (Real Time)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_16">
-             <item>
-              <widget class="QPushButton" name="StartReadingButton_4">
-               <property name="text">
-                <string>Start</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="StopReadingButton_4">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="text">
-                <string>Stop</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QGridLayout" name="gridLayout_28">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_71">
-               <property name="text">
-                <string>Time:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="timeLabel_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_72">
-               <property name="text">
-                <string>ms</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_73">
-               <property name="text">
-                <string>Amp1:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="amp1Label_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_74">
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_75">
-               <property name="text">
-                <string>Amp2:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="amp2Label_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="label_76">
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QGridLayout" name="gridLayout_29">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_77">
-             <property name="text">
-              <string>     Load avg. Surface Data
-            (Planning CT)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_17">
-             <item>
-              <widget class="QPushButton" name="LoadingButton_4">
-               <property name="text">
-                <string>Load</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="StopLoadingButton_4">
-               <property name="text">
-                <string>Stop</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="0">
-            <layout class="QGridLayout" name="gridLayout_30">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_78">
-               <property name="text">
-                <string>Time:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="timeLabelAvg_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_79">
-               <property name="text">
-                <string>ms</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_80">
-               <property name="text">
-                <string>Amp1:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="amp1LabelAvg_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_81">
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_82">
-               <property name="text">
-                <string>Amp2:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="amp2LabelAvg_4">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="label_83">
-               <property name="text">
-                <string>mm</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <widget class="QPushButton" name="SelectLoadingFileButton">
+         <property name="text">
+          <string>Select File</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="StartPhaseRecognitionButton">
-           <property name="text">
-            <string>Start Phase Recognition</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="phaseLabel">
-           <property name="text">
-            <string>Phase: </string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QLabel" name="LoadingFileLabel">
+         <property name="text">
+          <string> </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QPushButton" name="LoadingButton">
+         <property name="text">
+          <string>Load</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="StopLoadingButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="ReadLabel">
+       <property name="text">
+        <string>Surface Data (Real Time)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QPushButton" name="SelectReadingFileButton">
+         <property name="text">
+          <string>Select File</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="ReadingFileLabel">
+         <property name="text">
+          <string> </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QPushButton" name="StartReadingButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string> Start Reading</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="StopReadingButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
+        <widget class="QPushButton" name="StartPhaseRecognitionButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Start Phase Recognition</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="phase_text">
+         <property name="maximumSize">
+          <size>
+           <width>1777197</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="text">
+          <string>Phase:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="phaseLabel">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Set Cutoff Frequency</string>
+          <string>Set Cutoff Frequency:</string>
          </property>
         </widget>
        </item>
@@ -263,36 +185,64 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QSlider" name="fc_slider">
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="sliderPosition">
-          <number>0</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QSlider" name="fc_slider">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="sliderPosition">
+        <number>0</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
+   <zorder>SelectReadingFileButton</zorder>
+   <zorder>ReadingFileLabel</zorder>
+   <zorder>StartReadingButton</zorder>
+   <zorder>StopReadingButton</zorder>
+   <zorder>StartPhaseRecognitionButton</zorder>
+   <zorder>phase_text</zorder>
+   <zorder>phaseLabel</zorder>
+   <zorder>fc_slider</zorder>
+   <zorder>label</zorder>
+   <zorder>fc_label</zorder>
+   <zorder>ReadLabel</zorder>
+   <zorder>Load_label</zorder>
+   <zorder>LoadingButton</zorder>
+   <zorder>StopLoadingButton</zorder>
+   <zorder>fc_slider</zorder>
+   <zorder>fc_label</zorder>
+   <zorder>verticalSpacer</zorder>
+   <zorder>SelectLoadingFileButton</zorder>
+   <zorder>LoadingFileLabel</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>473</width>
-     <height>25</height>
+     <width>531</width>
+     <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuControl_Window">
+    <property name="title">
+     <string>Control Window</string>
+    </property>
+   </widget>
+   <addaction name="menuControl_Window"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

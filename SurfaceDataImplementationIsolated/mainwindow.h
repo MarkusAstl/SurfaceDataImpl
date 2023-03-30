@@ -5,6 +5,7 @@
 #include <QLabel>
 
 #include "surfacedata.h"
+#include "loadingthread.h"
 #include "chartdialog.h"
 #include "qcustomplot.h"
 #include <armadillo>
@@ -24,37 +25,36 @@ public:
     ~MainWindow();
 
     SurfaceData *rThread;
-    SurfaceData *lThread;
-    SurfaceData *prThread;
+    LoadingThread *lThread;
 
-    QString path1 = "Sarah_4D_CT_dummy2";                          // two columns
-    QString path2 = "2021_11_30_Andi_RespSignal_20211130_171611_clean";    // three columns
+    QString rPath;
+    QString lPath;
 
     ChartDialog *chartDialog;
     DynamicChart *dynamicChart;
     DynamicChart *filterChart;
     QCustomPlot *staticChart;
 
-    int dtSurfData = 50; // 75
-
 public slots:
-    void onLnReadingFinished(QStringList, int);
-    void onLoadingFinished(QStringList, int);
-    void addAvgData(QList<double>*, QList<double>*, QList<double>*, int);
+    void addAvgData(QList<double>*, QList<double>*);
     void phaseChanged(int*);
-    void on_CreateChart(double*, double*, double*);
+    void on_CreateChart(double, double, double);
 
 private:
     Ui::MainWindow *ui;
 
 private slots:
-    void on_StartReadingButton_4_clicked();
-    void on_StopReadingButton_4_clicked();
-    void on_LoadingButton_4_clicked();
-    void on_StopLoadingButton_4_clicked();
+    void on_StartReadingButton_clicked();
+    void on_StopReadingButton_clicked();
+    void on_LoadingButton_clicked();
+    void on_StopLoadingButton_clicked();
     void on_StartPhaseRecognitionButton_clicked();
     void extremum_search(QList<double>*, QList<int>*, QList<int>*, bool*);
     void on_fc_slider_sliderMoved(int position);
+    void on_SelectReadingFileButton_clicked();
+    void on_LoadingStopped();
+
+    void on_SelectLoadingFileButton_clicked();
 
 signals:
     void adjustYaxis(double*);

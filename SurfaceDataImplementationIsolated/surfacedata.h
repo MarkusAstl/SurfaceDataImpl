@@ -6,6 +6,7 @@
 #include <QTextStream>
 #include <QVector>
 #include <QElapsedTimer>
+#include <QMutex>
 
 class SurfaceData : public QThread
 {
@@ -20,7 +21,10 @@ public:
     qint64 elapsed;
 
     bool filtering;
+    bool PhaseRecogStarted;
+    QMutex mutex;
 
+    QStringList SplitLn;
     QList<double> TimeList;
     QList<double> Amp1List;
     QList<double> Amp2List;
@@ -49,7 +53,6 @@ public:
     int lastMinInd;
     int lastMaxInd;
     bool maxIsLast;
-    bool extrDetectionActive;
     bool phaseRecogActive;
 
     int windowSize = 5;
@@ -62,20 +65,29 @@ public:
     QList<double> smthdAmp1List;
 
     QString path;
-    int sleepingTime;  
+    QFile f;
+    int sleepingTime = 75;
 
 public slots:
-    void phaseRecognition(double*, double*, double*, int*, bool*, bool*);
+    void readOnly();
+    bool createOutputFile();
+    bool readHeaderLines(QFile*);
+    void phaseRecognition(double*, double*, double*, int*, bool*);
     bool newMaxDetected(QList<double>*, bool*, int*, int*);
     bool checkBreathCycleDur(double*, double*, double*, bool*);
+    void setFilterParams();
+    bool filterNewDatapoint(QList<double> *, QList<double> *, double *);
+
+private slots:
+    bool saveValsToLists(QList<double>*, QList<double>*, QStringList*);
+    QStringList readOneLn(QFile*);
 
 signals:
-    void LnReadingFinished(QStringList, int);
-    void DataReadingFinished(QList<double>*, QList<double>*, QList<double>*, int);
+    void LnReadingFinished(QStringList);
     void FilteringFinished(double, double);
     void monotonyCheckDone(QList<double>*, QList<double>*, int*, int*, int*);
     void showCurrentPhase(int*);
-    void CreateChart(double*, double*, double*);
+    void CreateChart(double, double, double);
 };
 
 #endif // SURFACEDATA_H

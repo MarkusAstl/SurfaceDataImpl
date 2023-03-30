@@ -70,7 +70,7 @@ DynamicChart::~DynamicChart()
 
 }
 
-void DynamicChart::addDataPoint(QStringList SplitLn, int colNum)
+void DynamicChart::addDataPoint(QStringList SplitLn)
 {
     // Convert QString to double
     bool ok1, ok2;
@@ -79,7 +79,8 @@ void DynamicChart::addDataPoint(QStringList SplitLn, int colNum)
 
     // Check if convertion worked
     if(ok1 == false || ok2 == false){
-        qDebug() << "----Error in Chart::addDataPoint function----";
+        qDebug() << "Error in DynamicChart::addDataPoint(QStringList). Converting QString to double was"
+                    "not successfull";
     }
 
     // Shift x axis range if data exceeds graph

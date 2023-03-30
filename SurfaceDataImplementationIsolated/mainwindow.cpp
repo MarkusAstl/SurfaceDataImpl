@@ -1,3 +1,5 @@
+//16:08
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -12,6 +14,7 @@
 
 // Surface data reading
 #include <surfacedata.h>
+#include <loadingthread.h>
 
 #include <QFile>
 #include <QStringList>
@@ -44,11 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     rThread = new SurfaceData(this);    // SurfaceData is a QThread object
 
     // loading surface data from planning CT
-    lThread = new SurfaceData(this);
-
-    // Updates time and ampl values in UI after a new line was read
-    connect(rThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLnReadingFinished(QStringList, int)));
-    connect(lThread,SIGNAL(LnReadingFinished(QStringList, int)), this, SLOT(onLoadingFinished(QStringList, int)));
+    lThread = new LoadingThread(this);
 
     // Updates phase in UI
     connect(rThread,SIGNAL(showCurrentPhase(int*)), this, SLOT(phaseChanged(int*)));
@@ -65,66 +64,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onLnReadingFinished(QStringList SplitLn, int colNum)
-{
-    // Update time value in UI
-    QString timeVal = SplitLn[0];
-    ui->timeLabel_4->setText(timeVal);
-
-    // Define amp1 value
-    QString amp1Val = SplitLn[1];
-
-    // Delete regex expression at the end if amp1 is last value
-    if(colNum == 2){
-        amp1Val.remove(amp1Val.size()-4, amp1Val.size()-1);
-    }
-
-    // Update amp1 value in UI
-    ui->amp1Label_4->setText(amp1Val);
-
-//    // Delete regex expression at the end if amp2 is last value
-//    if(colNum == 3){
-//        QString amp2Val = SplitLn[2];
-
-//        // Update amp2 value in UI if there is one
-//        ui->amp2Label_4->setText(amp2Val);
-//    }
-}
-
-void MainWindow::onLoadingFinished(QStringList SplitLn, int colNum)
-{
-    // Update time value in UI
-    QString timeValAvg = SplitLn[0];
-    ui->timeLabelAvg_4->setText(timeValAvg);
-
-    // Define amp1 value
-    QString amp1ValAvg = SplitLn[1];
-
-    // Delete regex expression at the end if amp1 is last value
-    if(colNum == 2){
-        amp1ValAvg.remove(amp1ValAvg.size()-2, amp1ValAvg.size()-1);
-    }
-
-    // Update amp1 value in UI
-    ui->amp1LabelAvg_4->setText(amp1ValAvg);
-
-    // Delete regex expression at the end if amp2 is last value
-    if(colNum == 3){
-        QString amp2ValAvg = SplitLn[2];
-
-        // Update amp2 value in UI if there is one
-        ui->amp2LabelAvg_4->setText(amp2ValAvg);
-    }
-}
-
-void MainWindow::on_CreateChart(double* frst_t, double* frst_A, double* frstFilt_A)
+void MainWindow::on_CreateChart(double frst_t, double frst_A, double frstFilt_A)
 {
     // Create dialog window to show real time and planning CT data
     chartDialog = new ChartDialog(this);        // Define new QDialog object; "this" points at MainWindow as a parent
     chartDialog->setDisabled(false);            // enables input events
 
     // Create and adjust dynamic chart
-    dynamicChart = new DynamicChart(0, 0, rThread, frst_t, frst_A);     // QChart object; starts constructor of DynamicChart
+    dynamicChart = new DynamicChart(0, 0, rThread, &frst_t, &frst_A);     // QChart object; starts constructor of DynamicChart
     dynamicChart->setTitle("Measured Data");
     dynamicChart->setTitleFont(QFont("sans", 10, QFont::Bold));
     dynamicChart->legend()->hide();
@@ -135,11 +82,11 @@ void MainWindow::on_CreateChart(double* frst_t, double* frst_A, double* frstFilt
     dynamicChartView->setRenderHint(QPainter::Antialiasing);       // Enable render hint 'Antialiasing' for chart view
 
     // If a new line was read the data series of the graph will be updated and x axis will be scrolled if necessary
-    QObject::connect(rThread, SIGNAL(LnReadingFinished(QStringList, int)), dynamicChart, SLOT(addDataPoint(QStringList, int)));
+    QObject::connect(rThread, SIGNAL(LnReadingFinished(QStringList)), dynamicChart, SLOT(addDataPoint(QStringList)));
 
     //---------------------------------------------------------------------------------------------------------
     // Plot filtered data
-    filterChart = new DynamicChart(0, 0, rThread, frst_t, frstFilt_A);
+    filterChart = new DynamicChart(0, 0, rThread, &frst_t, &frstFilt_A);
     filterChart->setTitle("Filtered Data");
     filterChart->setTitleFont(QFont("sans", 10, QFont::Bold));
     filterChart->legend()->hide();
@@ -163,37 +110,44 @@ void MainWindow::on_CreateChart(double* frst_t, double* frst_A, double* frstFilt
 }
 
 
-void MainWindow::on_StartReadingButton_4_clicked()
+void MainWindow::on_StartReadingButton_clicked()
 {
-    // Define path of real time data file
-    rThread->path = MainWindow::path2;
+    ui->StartReadingButton->setText("Reading..");
+    ui->StartReadingButton->setEnabled(false);
+    ui->StopReadingButton->setEnabled(true);
+    ui->StartPhaseRecognitionButton->setEnabled(true);
 
-    // Read data with defined delay
-    rThread->sleepingTime = MainWindow::dtSurfData;
+    // Define path of real time data file
+    rThread->path = MainWindow::rPath;
 
     // Start reading of data
     rThread->filtering = true;                          // filter data in real time and enable phase recognition
     rThread->start();                                   // starts SurfaceData::run() for rThread
 
-    connect(rThread,SIGNAL(CreateChart(double*, double*, double*)), this, SLOT(on_CreateChart(double*, double*, double*)));
+    // As soon as first datapoint was filtered create the data chart
+    connect(rThread,SIGNAL(CreateChart(double, double, double)), this, SLOT(on_CreateChart(double, double, double)));
 }
 
 void MainWindow::phaseChanged(int* phase)
 {
-    QString phaseLabelStr = "Current phase: " + QString::number(*phase);
+    QString phaseLabelStr = QString::number(*phase);
     ui->phaseLabel->setText(phaseLabelStr);
 }
 
-void MainWindow::on_StopReadingButton_4_clicked()
+void MainWindow::on_StopReadingButton_clicked()
 {
     // Stop reading of real time data
-    //rThread->Stop = true; -> old code
     rThread->fout.close();
     rThread->terminate();
 }
 
-void MainWindow::on_LoadingButton_4_clicked()
+void MainWindow::on_LoadingButton_clicked()
 {    
+    ui->LoadingButton->setText("Loading..");
+    ui->StopLoadingButton->setEnabled(true);
+
+    lThread->path = MainWindow::lPath;
+
     // Create chart for UI showing data from planning CT
     staticChart = new QCustomPlot();
     staticChart->setFixedSize(950,210);
@@ -202,27 +156,32 @@ void MainWindow::on_LoadingButton_4_clicked()
     staticChart->setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
 
     // Add data from file to chart as soon as reading is finished
-    QObject::connect(lThread, SIGNAL(DataReadingFinished(QList<double>*, QList<double>*, QList<double>*, int)),
-                     this, SLOT(addAvgData(QList<double>*, QList<double>*, QList<double>*, int)));
+    QObject::connect(lThread, SIGNAL(DataLoadingFinished(QList<double>*, QList<double>*)),
+                     this, SLOT(addAvgData(QList<double>*, QList<double>*)));
 
-    // Define path of planning CT file
-    lThread->path = MainWindow::path1;
-
-    // Read data with defined delay
-    lThread->sleepingTime = 0;
+    // Adjust UI
+    QObject::connect(lThread, SIGNAL(LoadingStopped()), this, SLOT(on_LoadingStopped()));
 
     // Start reading of data
-    lThread->filtering = false;             // planning CT data does not need to bee filtered
     lThread->start();                       // starts SurfaceData::run() for lThread
 }
 
-void MainWindow::on_StopLoadingButton_4_clicked()
+void MainWindow::on_LoadingStopped(){
+    ui->LoadingButton->setText("Loaded");
+    ui->StopLoadingButton->setEnabled(false);
+    ui->StartReadingButton->setEnabled(true);
+    ui->fc_slider->setEnabled(true);
+}
+
+void MainWindow::on_StopLoadingButton_clicked()
 {
+    on_LoadingStopped();
+
     // Stop reading of planning CT data
     lThread->terminate();
 }
 
-void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListPtr, QList<double>* Amp2ListPtr, int colNum)
+void MainWindow::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1ListPtr)
 {
     // Set chart title
     QCPTextElement *staticTitle = new QCPTextElement(staticChart);
@@ -416,6 +375,7 @@ void MainWindow::extremum_search(QList<double>* data, QList<int>* max_ind_list, 
 
 void MainWindow::on_StartPhaseRecognitionButton_clicked()
 {
+    ui->StartPhaseRecognitionButton->setEnabled(false);
 
     // -------------PREPARE FOR PHASE RECOGNITION----------------------------------------------------------------------
 
@@ -429,7 +389,12 @@ void MainWindow::on_StartPhaseRecognitionButton_clicked()
     rThread->T = rThread->TimeList[rThread->newMaxInd] - rThread->TimeList[rThread->oldMaxInd];
     rThread->dT = rThread->T /10.0;
 
-    rThread->maxIsLast = true;
+    if (rThread->newMaxInd > rThread->lastMinInd){
+        rThread->maxIsLast = true;
+    }
+    else {
+        rThread->maxIsLast = false;
+    }
 
     // -------------CALCULATE X AXIS SHIFT CAUSED BY FILTERING---------------------------------------------------------
 
@@ -460,16 +425,17 @@ void MainWindow::on_StartPhaseRecognitionButton_clicked()
     }
     rThread->filterShift = shiftSum / 3.0;
     rThread->correctedNewMaxTime = rThread->TimeList[rThread->newMaxInd] - rThread->filterShift;
-    //qDebug() << "Filter shift = " << rThread->filterShift << " s";
 
 
     // -------------START PHASE RECOGNITION----------------------------------------------------------------------------
 
     // Parameters are set -> Phase recognition can be started
-    rThread->extrDetectionActive = true;
+    rThread->PhaseRecogStarted = true;
     chartDialog->reject();
-}
 
+    // Dislay phase recognition starting time for test documentation
+    qDebug() << rThread->TimeList.rbegin()[0];
+}
 
 
 void MainWindow::on_fc_slider_sliderMoved(int position)
@@ -487,10 +453,36 @@ void MainWindow::on_fc_slider_sliderMoved(int position)
         new_Amp = convProd+new_Amp;
     }
 
-    //emit adjustYaxis(&new_Amp);
-
     QString fc_text = QString::number(new_fc, 'f', 2);
     fc_text = fc_text + " Hz";
     ui->fc_label->setText(fc_text);
 }
 
+
+void MainWindow::on_SelectReadingFileButton_clicked()
+{
+    QString rFullPath = QFileDialog::getOpenFileName(this, "Select Surface Data", QDir::currentPath()+"/SurfaceData", "All Files (*.*)");
+    if (rFullPath.isEmpty()){
+        qDebug() << "Error in MainWindow::on_SelectReadingFileButton_clicked()."
+                    "Selecting surface data file was not successfull.";
+    }
+    else {
+        QFileInfo rPathInfo(rFullPath);
+        rPath = rPathInfo.fileName();
+    }
+    ui->ReadingFileLabel->setText(rPath);
+}
+
+void MainWindow::on_SelectLoadingFileButton_clicked()
+{
+    QString lFullPath = QFileDialog::getOpenFileName(this, "Select 4D CT Data", QDir::currentPath()+"/SurfaceData", "All Files (*.*)");
+    if (lFullPath.isEmpty()){
+        qDebug() << "Error in MainWindow::on_SelectLoadingFileButton_clicked()."
+                    "Selecting 4d CT data file was not successfull.";
+    }
+    else {
+        QFileInfo lPathInfo(lFullPath);
+        lPath = lPathInfo.fileName();
+    }
+    ui->LoadingFileLabel->setText(lPath);
+}

@@ -51,7 +51,7 @@ public:
     //int debugVal;
 
 public slots:
-    void addDataPoint(QStringList, int);
+    void addDataPoint(QStringList);
     void addFilteredDataPoint(double, double);
     void on_adjustYaxis(double*);
 

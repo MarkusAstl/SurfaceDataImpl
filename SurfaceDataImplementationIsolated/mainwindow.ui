@@ -14,13 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>10</y>
+      <x>70</x>
+      <y>100</y>
       <width>281</width>
-      <height>244</height>
+      <height>252</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -43,7 +43,7 @@
        <item>
         <widget class="QLabel" name="LoadingFileLabel">
          <property name="text">
-          <string> </string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -84,11 +84,35 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="ReadLabel">
-       <property name="text">
-        <string>Surface Data (Real Time)</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="ReadLabel">
+         <property name="text">
+          <string>Surface Data (Real Time)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="DebugModeRadioButton">
+         <property name="text">
+          <string>Debug Mode</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -102,7 +126,7 @@
        <item>
         <widget class="QLabel" name="ReadingFileLabel">
          <property name="text">
-          <string> </string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -113,7 +137,7 @@
        <item>
         <widget class="QPushButton" name="StartReadingButton">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
           <string> Start Reading</string>
@@ -208,25 +232,6 @@
      </item>
     </layout>
    </widget>
-   <zorder>SelectReadingFileButton</zorder>
-   <zorder>ReadingFileLabel</zorder>
-   <zorder>StartReadingButton</zorder>
-   <zorder>StopReadingButton</zorder>
-   <zorder>StartPhaseRecognitionButton</zorder>
-   <zorder>phase_text</zorder>
-   <zorder>phaseLabel</zorder>
-   <zorder>fc_slider</zorder>
-   <zorder>label</zorder>
-   <zorder>fc_label</zorder>
-   <zorder>ReadLabel</zorder>
-   <zorder>Load_label</zorder>
-   <zorder>LoadingButton</zorder>
-   <zorder>StopLoadingButton</zorder>
-   <zorder>fc_slider</zorder>
-   <zorder>fc_label</zorder>
-   <zorder>verticalSpacer</zorder>
-   <zorder>SelectLoadingFileButton</zorder>
-   <zorder>LoadingFileLabel</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

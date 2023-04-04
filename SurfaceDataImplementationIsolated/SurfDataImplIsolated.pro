@@ -15,14 +15,16 @@ SOURCES += \
     mainwindow.cpp \
     qcustomplot.cpp \
     surfacedata.cpp \
-    loadingthread.cpp
+    loadingthread.cpp \
+    debugthread.cpp
 
 HEADERS += \
     chartdialog.h \
     mainwindow.h \
     qcustomplot.h \
     surfacedata.h \
-    loadingthread.h
+    loadingthread.h \
+    debugthread.h
 
 FORMS += \
     chartdialog.ui \

@@ -1,3 +1,5 @@
+// SurfaceData thread is for reading breathing data dynamically from a csv file and applying phase recognition
+
 #include "surfacedata.h"
 
 #include <QtCore>
@@ -33,7 +35,9 @@ SurfaceData::SurfaceData(QObject *parent)   :
 
 
 bool SurfaceData::saveValsToLists(QList<double> *TimeList, QList<double> *Amp1List, QStringList *SplitLn){
-    // Save values of one line into corresponding lists
+    // Convert QStrings of new line (SplitLn) to doubles and add them to TimeList and Amp1List
+    // Return true if saving was successfull
+
     bool ok1;
     double timeVal = SplitLn->at(0).toDouble(&ok1);
     bool ok2;
@@ -50,7 +54,10 @@ bool SurfaceData::saveValsToLists(QList<double> *TimeList, QList<double> *Amp1Li
 }
 
 QStringList SurfaceData::readOneLn(QFile *f){
-    // Seperate Qstring of one line into QStringList of its values
+    // f: csv file with amplitude & time values of real time data
+    // Read one line in file and seperate it into QStringList of its values
+    // SplitLn: [timeVal, Amp1Val, Amp2Val] -> also without Amp2Val possible
+
     QString separator(";");
     QString ln = f->readLine();
     QStringList SplitLn = ln.split(separator);
@@ -58,7 +65,9 @@ QStringList SurfaceData::readOneLn(QFile *f){
 }
 
 bool SurfaceData::filterNewDatapoint(QList<double> *Amp1List, QList<double> *smthdAmp1List, double *aValue){
-    // Low pass filter construncted with convolution using a left sided exponential moving avergage filter
+    // Amp1List: raw ampl vals;  smthdAmp1List: filtered ampl vals;  avalue: parameter representing cutoff frequency
+    // Left sided exponential moving avergage filter applied on newest datapoint
+
     double newSmthdVal = *aValue * Amp1List->rbegin()[0] + (1 - *aValue) * smthdAmp1List->rbegin()[0];
     smthdAmp1List->append(newSmthdVal);
     return true;
@@ -66,17 +75,22 @@ bool SurfaceData::filterNewDatapoint(QList<double> *Amp1List, QList<double> *smt
 
 
 void SurfaceData::phaseRecognition(double* t, double* t_lastMax, double* dT, int* phase, bool* phaseRecogActive){
-    // Determine phase
+    // t: newest time val; t_lastMax: time val of last detected max; dT: last breathing cycle duration
+    // phase: current breathing phase; phaseRecogActive: true if there is a fallback/error
+    // Assume current phase by projecting 13 phase durations from last cycle into the future starting at time of last Max
+    // Causes a fallback (phaseRecogActive=false & phase=0) if no new max is detected for longer than t = dT * 1.3
+    // Adjusts phases from 11 to 13 to valid phases from 1 to 3
+
     double dt = *t - *t_lastMax;
     *phase = int(dt/ *dT) + 1;
 
     if (*phase > 10) {
         if (*phase >= 14){
-            *phase = 0;                  // Fallback if t < t_lastMax
+            *phase = 0;
             *phaseRecogActive = false;
         }
         else{
-            *phase = *phase - 10;       // Fallback if t > 13*dT
+            *phase = *phase - 10;
         }
     }
 }
@@ -213,6 +227,11 @@ void SurfaceData::setFilterParams(){
     double frst_A = Amp1List.rbegin()[0];
     emit CreateChart(frst_t, frst_A, smthdAmp1List.rbegin()[0]);
 }
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 void SurfaceData::run(){
 

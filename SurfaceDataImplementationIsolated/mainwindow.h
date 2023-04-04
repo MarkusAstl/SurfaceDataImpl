@@ -27,8 +27,8 @@ public:
     SurfaceData *rThread;
     LoadingThread *lThread;
 
-    QString rPath;
-    QString lPath;
+    QString rPath = "2021_11_30_Andi_RespSignal_20211130_171611_clean.csv";
+    QString lPath = "BruMi_4D_CT_dummy.csv";
 
     ChartDialog *chartDialog;
     DynamicChart *dynamicChart;

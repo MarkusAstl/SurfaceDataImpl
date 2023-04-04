@@ -1,3 +1,5 @@
+// LoadingThread is only for loading the average breathing cycle of the planning CT
+
 #include "loadingthread.h"
 #include <QtCore>
 #include <QDebug>
@@ -9,8 +11,14 @@ LoadingThread::LoadingThread(QObject *parent)   :
 
 }
 
+// --------------------------------------------------------------------------------------------------------------------------------------------------------
+// Functions
+
 QStringList LoadingThread::LoadOneLn(QFile *f){
-    // Seperate Qstring of one line into QStringList of its values
+    // f: csv file with amplitude & time values of the average breathing cycle of the planning CT
+    // Read one line in file and seperate it into QStringList of its values
+    // SplitLn: [timeVal, Amp1Val, Amp2Val] -> also without Amp2Val possible
+
     QString separator(";");
     QString ln = f->readLine();
     QStringList SplitLn = ln.split(separator);
@@ -18,7 +26,9 @@ QStringList LoadingThread::LoadOneLn(QFile *f){
 }
 
 bool LoadingThread::saveValsToLists(QList<double> *TimeList, QList<double> *Amp1List, QStringList *SplitLn){
-    // Save values of one line into corresponding lists
+    // Convert QStrings of new line (SplitLn) to doubles and add them to TimeList and Amp1List
+    // Return true if saving was successfull
+
     bool ok1;
     double timeVal = SplitLn->at(0).toDouble(&ok1);
     bool ok2;
@@ -35,6 +45,10 @@ bool LoadingThread::saveValsToLists(QList<double> *TimeList, QList<double> *Amp1
 }
 
 bool LoadingThread::readHeaderLines(QFile* f){
+    // Find expected header lines in csv file f to know where the actual data starts
+    // Return true if headers were found in first 5 rows
+
+
 //    // Display files and directories in current folder
 //    QDir dir;
 //    foreach(QFileInfo item, dir.entryInfoList() )
@@ -45,53 +59,46 @@ bool LoadingThread::readHeaderLines(QFile* f){
 //                qDebug() << "File: " << item.absoluteFilePath();
 //        }
 
-    // Locate row of headers and determine number of columns
-    int colNum = 0;
-
     QString twoHeaders = { "Time (ms); Pri Amplitude (mm)\r\n" };
     QString threeHeaders = { "Time (ms); Pri Amplitude (mm); Sec Amplitude (mm);\r\n" };
 
+    QString ln1;
     for (int lnInd = 0; lnInd <= 5; ++lnInd) {
-        QString ln1 = f->readLine(0);
+        ln1 = f->readLine(0);
 
         if (lnInd == 5) {
             qDebug() << "Error in LoadingThread::readHeaderLines(QFile*)."
-                        " First row of data in csv file was not found.";
+                        " Headers in csv file were not found in first 5 lines.";
+            return false;
         }
         else if (ln1 == twoHeaders) {
-            colNum = 2;
-            break;
+            return true;
         }
         else if (ln1 == threeHeaders) {
-            colNum = 3;
-            break;
+            return true;
         }
-    }
-
-    // Check if number of columns is permissible
-    if (colNum == 0) {
-        return false;
-    }
-    else {
-        return true;
     }
 }
 
 void LoadingThread::readOnly(){
+    // Read one line of the csv file f and save the values as doubles to TimeList and Amp1List
 
-    // Read one line
     SplitLn = LoadOneLn(&f);
 
-    // Save line in lists (TimeList, Amp1List)
     mutex.lock();
     if (!saveValsToLists(&TimeList, &Amp1List, &SplitLn)) {
-        qDebug() << "Error in LoadingThread::readOnly()."
-                    " Saving values was not succesful";
+        qDebug() << "Error in LoadingThread::readOnly(). Saving values was not succesful";
     }
     mutex.unlock();
 }
 
+// --------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 void LoadingThread::run(){
+    // Read whole csv file f, save values to TimeList and Amp1List and emit signal LoadingStopped if finished
 
     //--------Prepare for reading-------------------------------------------------------------------------------
 
@@ -101,7 +108,6 @@ void LoadingThread::run(){
         qDebug() << "Error in LoadingThread::run(). Opening SurfaceData file was not successful";
     }
 
-    // Read header lines of csv file and find first datapoint
     if(!readHeaderLines(&f)){
             qDebug() << "Error in LoadingThread::run()."
                         " Reading header lines in function readHeaderLines(QFile*) was not successfull";
@@ -109,19 +115,17 @@ void LoadingThread::run(){
 
 
 
-    //--------Reading only-------------------------------------------------------------------------------------
+    //--------Reading------------------------------------------------------------------------------------------
 
-    int iteration = 1;
     while (!f.atEnd()){
-
         readOnly();
-        iteration = iteration + 1;
     }
 
-    // Emit signal to start addAvgData() to adjust staticChart layout and to add the data
+    // Emit signal to set up staticChart and to add loaded data
     emit DataLoadingFinished(&TimeList, &Amp1List);
+
+    // Emit signal to adjust UI
     emit LoadingStopped();
 
-    // Close file
     f.close();
 }

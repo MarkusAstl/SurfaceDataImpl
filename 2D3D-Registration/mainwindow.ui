@@ -1,0 +1,2792 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1780</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1780</width>
+    <height>900</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1780</width>
+    <height>900</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>FIRE-Fast Intensity-Based Image Registration in Real-Time</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <widget class="QLabel" name="label_Drr_1">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>20</y>
+      <width>410</width>
+      <height>410</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Drr_2">
+    <property name="geometry">
+     <rect>
+      <x>629</x>
+      <y>440</y>
+      <width>411</width>
+      <height>411</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Xray_1">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>20</y>
+      <width>410</width>
+      <height>410</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Xray_2">
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>440</y>
+      <width>410</width>
+      <height>410</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>1470</x>
+      <y>20</y>
+      <width>291</width>
+      <height>831</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QFrame" name="verticalFrame_3">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButton_Xray1ListLoad">
+            <property name="text">
+             <string>Load Xray Images</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidget_Xray1">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDrop</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_15">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton_Mask11">
+            <property name="text">
+             <string>Mask 1</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="radioButton_Mask12">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Mask 2</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask1PosV">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="sliderPosition">
+             <number>205</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Width:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Pos H:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask1PosH">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>205</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Pos V:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask1Prop1">
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+            <property name="sliderPosition">
+             <number>0</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Height:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask1Prop2">
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+            <property name="sliderPosition">
+             <number>0</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_10">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_LoadMask1">
+            <property name="text">
+             <string>Load Mask</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_SaveMask1">
+            <property name="text">
+             <string>Save Mask</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_Mask1">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QFrame" name="verticalFrame_4">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="pushButton_Xray2ListLoad">
+            <property name="text">
+             <string>Load Xray Images</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="listWidget_Xray2">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="dragDropMode">
+           <enum>QAbstractItemView::DragDrop</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="radioButton_Mask21">
+            <property name="text">
+             <string>Mask 1</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="radioButton_Mask22">
+            <property name="text">
+             <string>Mask 2</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Pos V:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask2PosV">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>205</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask2Prop1">
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+            <property name="sliderPosition">
+             <number>0</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Pos H:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask2PosH">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>205</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Width:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSlider" name="horizontalSlider_Mask2Prop2">
+            <property name="maximum">
+             <number>410</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_27">
+            <property name="text">
+             <string>Height:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_14">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_LoadMask2">
+            <property name="text">
+             <string>Load Mask</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_SaveMask2">
+            <property name="text">
+             <string>Save Mask</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_Mask2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>19</x>
+      <y>22</y>
+      <width>591</width>
+      <height>741</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_43">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>RT System</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_RtSystem"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Registration Mode</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_RegistrationMode"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Merit Function</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_MeritFunction"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Optimizer Settings</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_13">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBox_tx">
+           <property name="text">
+            <string>tX</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="checkBox_ty">
+           <property name="text">
+            <string>tY</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="checkBox_tz">
+           <property name="text">
+            <string>tZ</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QCheckBox" name="checkBox_ry">
+           <property name="text">
+            <string>rY</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QCheckBox" name="checkBox_rx">
+           <property name="text">
+            <string>rX</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
+          <widget class="QCheckBox" name="checkBox_rz">
+           <property name="text">
+            <string>rZ</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>Background Saturation</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_BackgroundSaturation">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+         <property name="value">
+          <number>128</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_12">
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>DRR Rotation</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <layout class="QGridLayout" name="gridLayout_11">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_26">
+             <property name="text">
+              <string>DRR Translation</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QToolButton" name="toolButton_DrrTransRotUp">
+             <property name="text">
+              <string>↑</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="toolButton_DrrTransformDown">
+             <property name="text">
+              <string>↓</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="0">
+          <widget class="QSlider" name="horizontalSlider_TransX">
+           <property name="minimum">
+            <number>-10000</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QSlider" name="horizontalSlider_RotZ">
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QSlider" name="horizontalSlider_RotY">
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QSlider" name="horizontalSlider_TransY">
+           <property name="minimum">
+            <number>-10000</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QSlider" name="horizontalSlider_RotX">
+           <property name="minimum">
+            <number>-1800</number>
+           </property>
+           <property name="maximum">
+            <number>1800</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QSlider" name="horizontalSlider_TransZ">
+           <property name="minimum">
+            <number>-10000</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout_18">
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_25">
+             <property name="text">
+              <string>X-Ray Bone Suppression</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBox_XrayBS">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_WeightingFactorXray">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_weightsBS">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QPushButton" name="pushButton_LoadVolume">
+           <property name="text">
+            <string>Load Volume (BS)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_LoadConfig">
+           <property name="text">
+            <string>Load Config</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_SaveConfig">
+           <property name="text">
+            <string>SaveConfig</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Registration_2D3D">
+         <property name="text">
+          <string>Registration 2D/3D</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_BatchRegistration2D3D">
+         <property name="text">
+          <string>Batch Registration 2D/3D</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_Test">
+         <property name="text">
+          <string>Test</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_SaveDrrs">
+         <property name="text">
+          <string>Save</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_CopyTransRot">
+         <property name="text">
+          <string>Copy TransRot</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>13</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="1" column="0">
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam1SourceDistance">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>-2000.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>2000.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam1RotX">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>-180.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>180.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam1RotY">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>-180.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>180.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam1RotZ">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>-180.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>180.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="3">
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>Cam1 Reference Rotation Angle [deg]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0" colspan="3">
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>Cam1 Source and Detector Position [mm]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam1DetectorDistance">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>-2000.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>2000.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_8">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Cam1 Intensity</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QToolButton" name="toolButton_Intensity1Up">
+               <property name="text">
+                <string>↑</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_Intensity1">
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>500</number>
+             </property>
+             <property name="sliderPosition">
+              <number>500</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Cam 1 Windowing</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_Windowing1Min">
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_Windowing1Max">
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>65535</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="1">
+              <widget class="QToolButton" name="toolButton_VoxelFilter1ThresholdSwap">
+               <property name="text">
+                <string>↻</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QToolButton" name="toolButton_VoxelFilter1ThresholdUp">
+               <property name="text">
+                <string>↑</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>Cam1 Voxel Filter Thresholds</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_VoxelFilter1ThresholdLow">
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_VoxelFilter1ThresholdHigh">
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>65535</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_29">
+             <property name="text">
+              <string>Cam1 Voxel Filter Suppression</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="horizontalSlider_WeightingFactorDrr1">
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_Cam1Settings">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <item>
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="2" column="0" colspan="3">
+            <widget class="QLabel" name="label_19">
+             <property name="text">
+              <string>Cam2 Reference Rotation Angle [deg]</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <widget class="QLabel" name="label_22">
+             <property name="text">
+              <string>Cam2 Source and Detector Position [mm]</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam2SourceDistance">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="minimum">
+              <double>-2000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>2000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam2DetectorDistance">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="minimum">
+              <double>-2000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>2000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam2RotX">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="minimum">
+              <double>-180.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>180.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam2RotY">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="minimum">
+              <double>-180.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>180.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QDoubleSpinBox" name="doubleSpinBox_Cam2RotZ">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="decimals">
+              <number>1</number>
+             </property>
+             <property name="minimum">
+              <double>-180.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>180.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_21">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Cam2 Intensity</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="toolButton_Intensity2Down">
+             <property name="text">
+              <string>↓</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider_Intensity2">
+           <property name="maximum">
+            <number>1000</number>
+           </property>
+           <property name="value">
+            <number>500</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_31">
+           <property name="text">
+            <string>Cam 2 Windowing</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider_Windowing2Min">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider_Windowing2Max">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>65535</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="2">
+            <widget class="QToolButton" name="toolButton_VoxelFilter2ThresholdDown">
+             <property name="text">
+              <string>↓</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QToolButton" name="toolButton_VoxelFilter2ThresholdSwap">
+             <property name="text">
+              <string>↻</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Cam2 Voxel Filter Thresholds</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider_VoxelFilter2ThresholdLow">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider_VoxelFilter2ThresholdHigh">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>65535</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_32">
+           <property name="text">
+            <string>Cam 2 Voxel Filter Suppression</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="horizontalSlider_WeightingFactorDrr2">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_Cam2Settings">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>760</y>
+      <width>591</width>
+      <height>86</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_13">
+           <item>
+            <widget class="QLabel" name="Load_label">
+             <property name="text">
+              <string>Planning CT Data</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_45">
+         <item>
+          <widget class="QPushButton" name="SelectLoadingFileButton">
+           <property name="text">
+            <string>Select File</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="LoadingFileLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_46">
+         <item>
+          <widget class="QPushButton" name="LoadingButton">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="StopLoadingButton">
+           <property name="text">
+            <string>Stop</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>13</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>88</width>
+             <height>17</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="ReadLabel">
+           <property name="text">
+            <string>Real Time Data</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="DebugModeRadioButton">
+           <property name="text">
+            <string>Debug Mode</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QPushButton" name="SelectReadingFileButton">
+           <property name="text">
+            <string>Select File</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="ReadingFileLabel">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_49">
+         <item>
+          <widget class="QPushButton" name="StartReadingButton">
+           <property name="text">
+            <string>Start Reading</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="StopReadingButton">
+           <property name="text">
+            <string>Stop</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>850</y>
+      <width>591</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QPushButton" name="StartPhaseRecognitionButton">
+       <property name="text">
+        <string>Start Phase Recognition</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="phase_text">
+       <property name="maximumSize">
+        <size>
+         <width>1777197</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Phase:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="phaseLabel">
+       <property name="text">
+        <string>0          </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>13</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_36">
+       <property name="text">
+        <string>fc:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="fc_label">
+       <property name="text">
+        <string>0.00 Hz</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="fc_slider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>label_Drr_2</zorder>
+   <zorder>label_Xray_1</zorder>
+   <zorder>label_Xray_2</zorder>
+   <zorder>verticalLayoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>label_Drr_1</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>Load_label</zorder>
+   <zorder>horizontalSpacer_8</zorder>
+   <zorder>horizontalSpacer_8</zorder>
+   <zorder>Load_label</zorder>
+   <zorder>horizontalSpacer_8</zorder>
+   <zorder>Load_label</zorder>
+   <zorder>DebugModeRadioButton</zorder>
+   <zorder>ReadLabel</zorder>
+   <zorder>horizontalSpacer_7</zorder>
+   <zorder>phase_text</zorder>
+   <zorder>StartPhaseRecognitionButton</zorder>
+   <zorder>phaseLabel</zorder>
+   <zorder>phaseLabel</zorder>
+   <zorder>phase_text</zorder>
+   <zorder>StartPhaseRecognitionButton</zorder>
+   <zorder>horizontalSpacer_4</zorder>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1780</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton_Xray1ListLoad</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonXrayList1Load()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1712</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1766</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Xray2ListLoad</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonXrayList2Load()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1736</x>
+     <y>491</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1771</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_LoadMask1</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonActiveMask1Load()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1612</x>
+     <y>423</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1772</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_LoadMask2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonActiveMask2Load()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1612</x>
+     <y>841</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1556</x>
+     <y>869</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask1PosH</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonActiveMask1Save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1749</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1770</x>
+     <y>407</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask2PosH</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonActiveMask2Save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1749</x>
+     <y>726</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1773</x>
+     <y>824</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_Mask11</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnRadioButtonSelectMask11AsActiveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1486</x>
+     <y>269</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1464</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_Mask12</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnRadioButtonSelectMask12AsActiveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1627</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1767</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_Mask21</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnRadioButtonSelectMask21AsActiveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1483</x>
+     <y>686</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1469</x>
+     <y>698</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_Mask22</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnRadioButtonSelectMask22AsActiveClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1626</x>
+     <y>686</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1767</x>
+     <y>691</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask1Prop1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1582</x>
+     <y>354</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1466</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask1Prop2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1545</x>
+     <y>382</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1468</x>
+     <y>394</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask2Prop1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask2ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1566</x>
+     <y>773</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1464</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask2Prop2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask2ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1546</x>
+     <y>804</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1466</x>
+     <y>824</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask1PosV</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1527</x>
+     <y>327</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1466</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask1PosH</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1529</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1464</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask2PosH</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask2ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1528</x>
+     <y>714</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1465</x>
+     <y>735</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Mask2PosV</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderActiveMask2ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1524</x>
+     <y>741</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1465</x>
+     <y>766</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_SaveMask2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonActiveMask2Save()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1686</x>
+     <y>834</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1686</x>
+     <y>877</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_Xray1</sender>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnXrayList1SelectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1715</x>
+     <y>149</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1771</x>
+     <y>165</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget_Xray2</sender>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnXrayList2SelectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1699</x>
+     <y>589</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1772</x>
+     <y>604</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_RotZ</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderTransRotValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>295</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>310</x>
+     <y>501</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_LoadVolume</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonVolumeLoad()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>803</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>208</x>
+     <y>710</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_BatchRegistration2D3D</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonBatchRegistration2D3D()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>293</x>
+     <y>870</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>377</x>
+     <y>814</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_VoxelFilter1ThresholdHigh</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderVoxelFilter1ThresholdValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>386</x>
+     <y>369</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>269</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Windowing1Min</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderWindowing1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_RotX</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderTransRotValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>506</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>336</x>
+     <y>445</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_TransX</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderTransRotValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>403</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>539</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_TransZ</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderTransRotValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>266</x>
+     <y>459</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>609</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Windowing1Max</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderWindowing1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>343</x>
+     <y>402</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_TransY</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderTransRotValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>313</x>
+     <y>575</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Test</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonTest()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>811</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>320</x>
+     <y>882</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Registration_2D3D</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonRegistration2D3D()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>841</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>349</x>
+     <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_RotY</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderTransRotValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>298</x>
+     <y>534</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>455</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam2RotY</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam2SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>515</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>327</x>
+     <y>681</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam1RotX</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam1SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>401</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam1RotY</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam1SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>510</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>488</x>
+     <y>170</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam2DetectorDistance</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam2SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>515</x>
+     <y>495</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>552</x>
+     <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam2SourceDistance</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam2SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>402</x>
+     <y>495</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>574</x>
+     <y>448</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam1RotZ</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam1SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>606</x>
+     <y>128</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>613</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam2RotZ</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam2SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>614</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>610</x>
+     <y>518</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam2RotX</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam2SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>540</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>291</x>
+     <y>662</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam1SourceDistance</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam1SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>379</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>408</x>
+     <y>41</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>doubleSpinBox_Cam1DetectorDistance</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCam1SettingsChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>510</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>569</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_VoxelFilter1ThresholdLow</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderVoxelFilter1ThresholdValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_VoxelFilter2ThresholdSwap</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonVoxelFilter2ThresholdSwap()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>589</x>
+     <y>641</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>614</x>
+     <y>566</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_DrrTransRotUp</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonTransRotUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>374</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>437</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_VoxelFilter2ThresholdHigh</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderVoxelFilter2ThresholdValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>485</x>
+     <y>698</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>93</x>
+     <y>661</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Intensity2</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderIntensity2ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>575</x>
+     <y>615</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>601</x>
+     <y>784</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_VoxelFilter1ThresholdUp</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonVoxelFilter1ThresholdUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>618</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_Intensity1Up</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonIntensity1Up()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>619</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_BackgroundSaturation</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderBackgroundSaturationValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_RegistrationMode</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnComboBoxRegistrationModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>45</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_Intensity2Down</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonIntensity2Down()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>614</x>
+     <y>586</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>616</x>
+     <y>702</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_SaveDrrs</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonSave()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>840</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>12</x>
+     <y>842</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_VoxelFilter2ThresholdDown</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonVoxelFilter2ThresholdDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>614</x>
+     <y>641</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>622</x>
+     <y>598</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_Intensity1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderIntensity1ValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>572</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>578</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_VoxelFilter2ThresholdLow</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderVoxelFilter2ThresholdValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>670</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>190</x>
+     <y>628</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_VoxelFilter1ThresholdSwap</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonVoxelFilter1ThresholdSwap()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>588</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>617</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBox_RtSystem</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnComboBoxRtSystemChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>126</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_DrrTransformDown</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonTransRotDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>374</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>235</x>
+     <y>410</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_XrayBS</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnCheckBoxXrayBSClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>653</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>246</x>
+     <y>634</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_WeightingFactorDrr1</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderWeightingFactorDrrValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>534</x>
+     <y>416</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>540</x>
+     <y>383</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_WeightingFactorXray</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnSliderWeightingFactorXrayValueChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>120</x>
+     <y>687</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>704</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_LoadConfig</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonLoadConfig()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>790</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>747</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_CopyTransRot</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonCopyTransRot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>415</x>
+     <y>860</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>412</x>
+     <y>878</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_SaveConfig</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>OnButtonSaveConfig()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>263</x>
+     <y>785</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>293</x>
+     <y>748</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>testSlot()</slot>
+  <slot>updateDrrView()</slot>
+  <slot>OnSaveDrrs()</slot>
+  <slot>OnSliderTransRotValueChanged()</slot>
+  <slot>OnUpdate()</slot>
+  <slot>OnSliderIntensity1ValueChanged()</slot>
+  <slot>OnSliderIntensity2ValueChanged()</slot>
+  <slot>OnLoadMask1()</slot>
+  <slot>OnLoadMask2()</slot>
+  <slot>OnXray1ListClear()</slot>
+  <slot>OnXray2ListClear()</slot>
+  <slot>OnXray1ListUp()</slot>
+  <slot>OnXray2ListDown()</slot>
+  <slot>OnButtonVoxelFilter1ThresholdSwap()</slot>
+  <slot>OnButtonVoxelFilter2ThresholdSwap()</slot>
+  <slot>OnButtonVoxelFilter1ThresholdUp()</slot>
+  <slot>OnButtonVoxelFilter2ThresholdDown()</slot>
+  <slot>OnButtonIntensity1Up()</slot>
+  <slot>OnButtonIntensity2Down()</slot>
+  <slot>OnCam1SettingsChanged()</slot>
+  <slot>OnCam2SettingsChanged()</slot>
+  <slot>OnSaveMask1()</slot>
+  <slot>OnSaveMask2()</slot>
+  <slot>OnButtonXrayList1Load()</slot>
+  <slot>OnButtonXrayList2Load()</slot>
+  <slot>OnXrayList1SelectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+  <slot>OnXrayList2SelectionChanged(QListWidgetItem*,QListWidgetItem*)</slot>
+  <slot>OnButtonVolumeLoad()</slot>
+  <slot>OnButtonVolumeBSLoad()</slot>
+  <slot>OnButtonActiveMask1Load()</slot>
+  <slot>OnButtonActiveMask1Save()</slot>
+  <slot>OnButtonActiveMask2Load()</slot>
+  <slot>OnButtonActiveMask2Save()</slot>
+  <slot>OnRadioButtonSelectMask11AsActiveClicked()</slot>
+  <slot>OnRadioButtonSelectMask12AsActiveClicked()</slot>
+  <slot>OnRadioButtonSelectMask21AsActiveClicked()</slot>
+  <slot>OnRadioButtonSelectMask22AsActiveClicked()</slot>
+  <slot>OnSliderActiveMask1ValueChanged()</slot>
+  <slot>OnSliderActiveMask2ValueChanged()</slot>
+  <slot>OnComboBoxRtSystemChanged(int)</slot>
+  <slot>OnComboBoxRegistrationModeChanged()</slot>
+  <slot>OnSliderVoxelFilter1ThresholdValueChanged()</slot>
+  <slot>OnSliderVoxelFilter2ThresholdValueChanged()</slot>
+  <slot>OnSliderBackgroundSaturationValueChanged()</slot>
+  <slot>OnButtonSave()</slot>
+  <slot>OnButtonTest()</slot>
+  <slot>OnButtonTransRotDown()</slot>
+  <slot>OnButtonTransRotUp()</slot>
+  <slot>OnButtonRegistration2D3D()</slot>
+  <slot>OnButtonBatchRegistration2D3D()</slot>
+  <slot>OnButtonBatchRegistration2D3DBS()</slot>
+  <slot>OnButtonSaveSettings()</slot>
+  <slot>OnCheckBoxXrayBSClicked()</slot>
+  <slot>OnSliderWeightingFactorXrayValueChanged()</slot>
+  <slot>OnSliderWeightingFactorDrrValueChanged()</slot>
+  <slot>OnButtonLoadSettings()</slot>
+  <slot>OnButtonLoadConfig()</slot>
+  <slot>OnButtonSaveConfig()</slot>
+  <slot>OnButtonCopyTransRot()</slot>
+  <slot>OnSliderWindowing1ValueChanged()</slot>
+ </slots>
+</ui>

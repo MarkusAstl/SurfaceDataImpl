@@ -189,7 +189,7 @@ public:
     QLabel *label_32;
     QSlider *horizontalSlider_WeightingFactorDrr2;
     QLabel *label_Cam2Settings;
-    QWidget *widget;
+    QWidget *layoutWidget1;
     QHBoxLayout *horizontalLayout_10;
     QVBoxLayout *verticalLayout_3;
     QHBoxLayout *horizontalLayout_11;
@@ -205,8 +205,8 @@ public:
     QSpacerItem *horizontalSpacer_3;
     QVBoxLayout *verticalLayout_4;
     QHBoxLayout *horizontalLayout_8;
-    QSpacerItem *horizontalSpacer_7;
     QLabel *ReadLabel;
+    QSpacerItem *horizontalSpacer_7;
     QRadioButton *DebugModeRadioButton;
     QHBoxLayout *horizontalLayout_9;
     QPushButton *SelectReadingFileButton;
@@ -214,7 +214,7 @@ public:
     QHBoxLayout *horizontalLayout_49;
     QPushButton *StartReadingButton;
     QPushButton *StopReadingButton;
-    QWidget *widget1;
+    QWidget *layoutWidget2;
     QHBoxLayout *horizontalLayout_6;
     QPushButton *StartPhaseRecognitionButton;
     QLabel *phase_text;
@@ -330,6 +330,7 @@ public:
         horizontalSlider_Mask1PosV->setObjectName(QStringLiteral("horizontalSlider_Mask1PosV"));
         horizontalSlider_Mask1PosV->setMinimum(1);
         horizontalSlider_Mask1PosV->setMaximum(410);
+        horizontalSlider_Mask1PosV->setValue(205);
         horizontalSlider_Mask1PosV->setSliderPosition(205);
         horizontalSlider_Mask1PosV->setOrientation(Qt::Horizontal);
 
@@ -539,7 +540,7 @@ public:
 
         layoutWidget = new QWidget(centralWidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(19, 22, 591, 741));
+        layoutWidget->setGeometry(QRect(19, 22, 591, 721));
         horizontalLayout_43 = new QHBoxLayout(layoutWidget);
         horizontalLayout_43->setSpacing(6);
         horizontalLayout_43->setContentsMargins(11, 11, 11, 11);
@@ -1162,10 +1163,10 @@ public:
 
         horizontalLayout_43->addLayout(verticalLayout_7);
 
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(20, 760, 591, 86));
-        horizontalLayout_10 = new QHBoxLayout(widget);
+        layoutWidget1 = new QWidget(centralWidget);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        layoutWidget1->setGeometry(QRect(20, 760, 591, 86));
+        horizontalLayout_10 = new QHBoxLayout(layoutWidget1);
         horizontalLayout_10->setSpacing(6);
         horizontalLayout_10->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
@@ -1179,7 +1180,7 @@ public:
         horizontalLayout_13 = new QHBoxLayout();
         horizontalLayout_13->setSpacing(6);
         horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
-        Load_label = new QLabel(widget);
+        Load_label = new QLabel(layoutWidget1);
         Load_label->setObjectName(QStringLiteral("Load_label"));
 
         horizontalLayout_13->addWidget(Load_label);
@@ -1197,12 +1198,12 @@ public:
         horizontalLayout_45 = new QHBoxLayout();
         horizontalLayout_45->setSpacing(6);
         horizontalLayout_45->setObjectName(QStringLiteral("horizontalLayout_45"));
-        SelectLoadingFileButton = new QPushButton(widget);
+        SelectLoadingFileButton = new QPushButton(layoutWidget1);
         SelectLoadingFileButton->setObjectName(QStringLiteral("SelectLoadingFileButton"));
 
         horizontalLayout_45->addWidget(SelectLoadingFileButton);
 
-        LoadingFileLabel = new QLabel(widget);
+        LoadingFileLabel = new QLabel(layoutWidget1);
         LoadingFileLabel->setObjectName(QStringLiteral("LoadingFileLabel"));
 
         horizontalLayout_45->addWidget(LoadingFileLabel);
@@ -1213,12 +1214,12 @@ public:
         horizontalLayout_46 = new QHBoxLayout();
         horizontalLayout_46->setSpacing(6);
         horizontalLayout_46->setObjectName(QStringLiteral("horizontalLayout_46"));
-        LoadingButton = new QPushButton(widget);
+        LoadingButton = new QPushButton(layoutWidget1);
         LoadingButton->setObjectName(QStringLiteral("LoadingButton"));
 
         horizontalLayout_46->addWidget(LoadingButton);
 
-        StopLoadingButton = new QPushButton(widget);
+        StopLoadingButton = new QPushButton(layoutWidget1);
         StopLoadingButton->setObjectName(QStringLiteral("StopLoadingButton"));
 
         horizontalLayout_46->addWidget(StopLoadingButton);
@@ -1239,16 +1240,16 @@ public:
         horizontalLayout_8 = new QHBoxLayout();
         horizontalLayout_8->setSpacing(6);
         horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
-        horizontalSpacer_7 = new QSpacerItem(88, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_8->addItem(horizontalSpacer_7);
-
-        ReadLabel = new QLabel(widget);
+        ReadLabel = new QLabel(layoutWidget1);
         ReadLabel->setObjectName(QStringLiteral("ReadLabel"));
 
         horizontalLayout_8->addWidget(ReadLabel);
 
-        DebugModeRadioButton = new QRadioButton(widget);
+        horizontalSpacer_7 = new QSpacerItem(88, 17, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        horizontalLayout_8->addItem(horizontalSpacer_7);
+
+        DebugModeRadioButton = new QRadioButton(layoutWidget1);
         DebugModeRadioButton->setObjectName(QStringLiteral("DebugModeRadioButton"));
 
         horizontalLayout_8->addWidget(DebugModeRadioButton);
@@ -1259,12 +1260,12 @@ public:
         horizontalLayout_9 = new QHBoxLayout();
         horizontalLayout_9->setSpacing(6);
         horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
-        SelectReadingFileButton = new QPushButton(widget);
+        SelectReadingFileButton = new QPushButton(layoutWidget1);
         SelectReadingFileButton->setObjectName(QStringLiteral("SelectReadingFileButton"));
 
         horizontalLayout_9->addWidget(SelectReadingFileButton);
 
-        ReadingFileLabel = new QLabel(widget);
+        ReadingFileLabel = new QLabel(layoutWidget1);
         ReadingFileLabel->setObjectName(QStringLiteral("ReadingFileLabel"));
 
         horizontalLayout_9->addWidget(ReadingFileLabel);
@@ -1275,12 +1276,12 @@ public:
         horizontalLayout_49 = new QHBoxLayout();
         horizontalLayout_49->setSpacing(6);
         horizontalLayout_49->setObjectName(QStringLiteral("horizontalLayout_49"));
-        StartReadingButton = new QPushButton(widget);
+        StartReadingButton = new QPushButton(layoutWidget1);
         StartReadingButton->setObjectName(QStringLiteral("StartReadingButton"));
 
         horizontalLayout_49->addWidget(StartReadingButton);
 
-        StopReadingButton = new QPushButton(widget);
+        StopReadingButton = new QPushButton(layoutWidget1);
         StopReadingButton->setObjectName(QStringLiteral("StopReadingButton"));
 
         horizontalLayout_49->addWidget(StopReadingButton);
@@ -1291,27 +1292,27 @@ public:
 
         horizontalLayout_10->addLayout(verticalLayout_4);
 
-        widget1 = new QWidget(centralWidget);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        widget1->setGeometry(QRect(20, 850, 591, 23));
-        horizontalLayout_6 = new QHBoxLayout(widget1);
+        layoutWidget2 = new QWidget(centralWidget);
+        layoutWidget2->setObjectName(QStringLiteral("layoutWidget2"));
+        layoutWidget2->setGeometry(QRect(20, 850, 591, 23));
+        horizontalLayout_6 = new QHBoxLayout(layoutWidget2);
         horizontalLayout_6->setSpacing(6);
         horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         horizontalLayout_6->setContentsMargins(0, 0, 0, 0);
-        StartPhaseRecognitionButton = new QPushButton(widget1);
+        StartPhaseRecognitionButton = new QPushButton(layoutWidget2);
         StartPhaseRecognitionButton->setObjectName(QStringLiteral("StartPhaseRecognitionButton"));
 
         horizontalLayout_6->addWidget(StartPhaseRecognitionButton);
 
-        phase_text = new QLabel(widget1);
+        phase_text = new QLabel(layoutWidget2);
         phase_text->setObjectName(QStringLiteral("phase_text"));
         phase_text->setMaximumSize(QSize(1777197, 16777215));
         phase_text->setLayoutDirection(Qt::LeftToRight);
 
         horizontalLayout_6->addWidget(phase_text);
 
-        phaseLabel = new QLabel(widget1);
+        phaseLabel = new QLabel(layoutWidget2);
         phaseLabel->setObjectName(QStringLiteral("phaseLabel"));
 
         horizontalLayout_6->addWidget(phaseLabel);
@@ -1320,24 +1321,23 @@ public:
 
         horizontalLayout_6->addItem(horizontalSpacer_4);
 
-        label_36 = new QLabel(widget1);
+        label_36 = new QLabel(layoutWidget2);
         label_36->setObjectName(QStringLiteral("label_36"));
 
         horizontalLayout_6->addWidget(label_36);
 
-        fc_label = new QLabel(widget1);
+        fc_label = new QLabel(layoutWidget2);
         fc_label->setObjectName(QStringLiteral("fc_label"));
 
         horizontalLayout_6->addWidget(fc_label);
 
-        fc_slider = new QSlider(widget1);
+        fc_slider = new QSlider(layoutWidget2);
         fc_slider->setObjectName(QStringLiteral("fc_slider"));
         fc_slider->setOrientation(Qt::Horizontal);
 
         horizontalLayout_6->addWidget(fc_slider);
 
         MainWindow->setCentralWidget(centralWidget);
-        layoutWidget->raise();
         layoutWidget->raise();
         label_Drr_2->raise();
         label_Xray_1->raise();
@@ -1346,17 +1346,6 @@ public:
         layoutWidget->raise();
         label_Drr_1->raise();
         layoutWidget->raise();
-        Load_label->raise();
-        Load_label->raise();
-        Load_label->raise();
-        DebugModeRadioButton->raise();
-        ReadLabel->raise();
-        phase_text->raise();
-        StartPhaseRecognitionButton->raise();
-        phaseLabel->raise();
-        phaseLabel->raise();
-        phase_text->raise();
-        StartPhaseRecognitionButton->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1780, 20));

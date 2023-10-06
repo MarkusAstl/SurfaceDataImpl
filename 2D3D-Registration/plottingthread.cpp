@@ -58,15 +58,15 @@ void PlottingThread::on_CreateChart(double frst_t, double frst_A, double frstFil
         chartDialog->layout()->addWidget(dynamicChartView);     // add dynamic chartView into the layout
 
         // Plot data from planning CT
-        staticChart = new QCustomPlot();
-        staticChart->setFixedSize(950,210);
-        staticChart->setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));   // Set points as decimal separator
         if (lThreadPtr->DataLoadingFinished){
+            staticChart = new QCustomPlot();
+            staticChart->setFixedSize(950,210);
+            staticChart->setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));   // Set points as decimal separator
             addAvgData(&lThreadPtr->TimeList, &lThreadPtr->Amp1List);
+            chartDialog->layout()->addWidget(staticChart);      // add static chartView
+            chartDialog->resize(1000, 750);
         }
-        chartDialog->layout()->addWidget(staticChart);      // add static chartView
 
-        chartDialog->resize(1000, 750);
     }
 
     // If Performance Mode..
@@ -145,3 +145,4 @@ void PlottingThread::addAvgData(QList<double>* TimeListPtr, QList<double>* Amp1L
     staticChart->yAxis->setLabelFont(QFont("sans",8, QFont::Bold));
     staticChart->replot();
 }
+

@@ -126,11 +126,11 @@ void LoadingThread::run(){
         readOnly();
     }
 
+    f.close();
+
     // Emit signal to set up staticChart and to add loaded data
     DataLoadingFinished = true;
 
     // Emit signal to adjust UI
     emit LoadingStopped();
-
-    f.close();
 }

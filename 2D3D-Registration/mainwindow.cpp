@@ -2501,6 +2501,9 @@ void MainWindow::on_StartReadingButton_clicked()
     }
     rThread->logStream << rThread->path << ";" << ui->DebugModeRadioButton->isChecked() << ";";
 
+    // Thread for plotting data
+    dThread = new PlottingThread(rThread, lThread, ui, this);
+
     // Adjust time delay between datapoints according to chosen mode
     if (ui->DebugModeRadioButton->isChecked()){
         // Current phase will be shown in UI and data is read faster
@@ -2528,9 +2531,6 @@ void MainWindow::on_StartReadingButton_clicked()
     // Start reading of data
     rThread->start();
 
-    // Thread for plotting data
-    dThread = new PlottingThread(rThread, lThread, ui, this);
-
     // Creates charts for real time data
     connect(rThread,SIGNAL(CreateChart(double, double, double)), dThread, SLOT(on_CreateChart(double, double, double)));
 
@@ -2543,11 +2543,14 @@ void MainWindow::on_StartReadingButton_clicked()
 void MainWindow::on_StopReadingButton_clicked()
 {
     // Stop reading of real time data
-    rThread->fout.close();
-    rThread->terminate();
-    ui->StartReadingButton->setText("Reading stopped");
+    qDebug() << "Stop button pushed";
     rThread->logStream << "Reading stopped";
     rThread->logFile.close();
+    rThread->fout.close();
+    rThread->IterTimer->stop();
+    rThread->terminate();
+    ui->StartReadingButton->setText("Reading stopped");
+
 }
 
 void MainWindow::on_LoadingButton_clicked()
@@ -2632,16 +2635,6 @@ void MainWindow::on_fc_slider_sliderReleased()
     rThread->fc = ui->fc_slider->value() / 100.0;
     rThread->aValue = qSqrt( qPow( qCos(2*M_PI* rThread->fc/ rThread->fs), 2) - 4*qCos(2*M_PI* rThread->fc/ rThread->fs) + 3)
             + qCos(2*M_PI* rThread->fc/ rThread->fs) - 1;
-
-//    double new_Amp = 0.0;
-//    double convProd = 1.0;
-//    int N = rThread->Amp1List.size();
-//    if (rThread->Amp1List.size() >= rThread->windowSize) {
-//        for(int convInd = 0; convInd < rThread->windowSize; ++convInd){
-//            convProd = rThread->aValue * (rThread->Amp1List[N-1-convInd] * qPow((1-rThread->aValue), convInd));
-//            new_Amp = convProd+new_Amp;
-//        }
-//    }
 
     // Show new fc in UI
     QString fc_text = QString::number(rThread->fc, 'f', 2);

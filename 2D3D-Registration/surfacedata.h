@@ -41,14 +41,15 @@ public:
     QFile logFile;
     QTextStream stream;
     QTextStream logStream;
+    int sizeBeforePR;
 
     // Value lists
     QStringList SplitLn;
     QList<double> TimeList;
     QList<double> Amp1List;
     QList<double> smthdAmp1List;
-    //QVector<int> PhaseList;
-    //QVector<int> IntervalPhaseList;
+    QVector<int> PhaseList;
+    QVector<int> IntervalPhaseList;
     QList<double> BorderTimes;
     QList<double> globalBorderTimes;
 
@@ -99,6 +100,7 @@ public slots:
     void ReadFiltIter();
     void ReadFiltPhaseDebugIter();
     void ReadFiltPhasePerformIter();
+    bool createOutputFile(QList<double>*, QVector<int>*);
 
 private slots:
     bool saveValsToLists(QList<double>*, QList<double>*, QStringList*);

@@ -53,6 +53,30 @@ bool SurfaceData::saveValsToLists(QList<double> *TimeList, QList<double> *Amp1Li
     }
 }
 
+bool SurfaceData::createOutputFile(QList<double>* TimeList, QVector<int>* PhaseList){
+    // Create csv file for testing phase recognition
+    QString testOutputFileName = "SurfaceData/Measured/MEASURED_" + path;
+    fout.setFileName(testOutputFileName);
+    if (!fout.open(QIODevice::WriteOnly|QIODevice::Text)) {
+        qDebug() << "Error in SurfaceData::createOutputFile()."
+                    " Creating output file was not successful";
+    }
+    QTextStream stream(&fout);
+
+    if (TimeList->size() == PhaseList->size()){
+        for(int i = 0; i < TimeList->size(); i++) {
+            stream << TimeList->at(i) << ',' << PhaseList->at(i) << "\n";
+        }
+        fout.close();
+        return true;
+    }
+    else{
+        qDebug() << "Error in SurfaceData::createOutputFile()."
+                    "List sizes are not matching: " << "TimeList: " << TimeList->size() << "; "<< "PhaseList: " << PhaseList->size();
+        return false;
+    }
+}
+
 QStringList SurfaceData::readOneLn(QFile *f){
     // f: csv file with amplitude & time values of real time data
     // Read one line in file and seperate it into QStringList of its values
@@ -76,7 +100,7 @@ void SurfaceData::filterNewDatapoint(QList<double> *Amp1List, QList<double> *smt
 void SurfaceData::phaseRecognition(double* t, double* t_lastMax, double* dT, int* phase, double* amp,
                                    double* compareAmp, double *validAmpDif, bool* phaseRecogActive){
     // t: newest time val; t_lastMax: time val of last detected max; dT: last breathing cycle duration
-    // phase: current breathing phase; phaseRecogActive: true if there is a fallback/error
+    // phase: current breathing phase; phaseRecogActive: true if there is no fallback/error
     // Assume current phase by projecting 13 phase durations from last cycle into the future starting at time of last Max
     // Causes a fallback (phaseRecogActive=false & phase=0) if no new max is detected for longer than t = dT * 1.3
     // Adjusts phases from 11 to 13 to valid phases from 1 to 3
@@ -224,8 +248,8 @@ void SurfaceData::extremum_search(QList<double>* data, QList<int>* max_ind_list,
     int q = search_range;
     int q_max;
     int q_min;
-    double a1_diff;
-    double a1_min_diff = 0.6;
+    double a_diff;
+    double a_min_diff = 0.6;
     bool skip;
     int num_of_extr = 0;
 
@@ -241,8 +265,8 @@ void SurfaceData::extremum_search(QList<double>* data, QList<int>* max_ind_list,
 
                     if(data->at(q_max) > data->at(q-dq)){
 
-                        a1_diff = abs(data->at(q_max) - data->at(q-dq));
-                        if(a1_diff >= a1_min_diff){
+                        a_diff = abs(data->at(q_max) - data->at(q-dq));
+                        if(a_diff >= a_min_diff){
                             is_max = true;
                         }
                     }
@@ -258,9 +282,9 @@ void SurfaceData::extremum_search(QList<double>* data, QList<int>* max_ind_list,
                     ++q;
 
                     if(data->at(q_max) > data->at(q)){
-                        a1_diff = abs(data->at(q_max) - data->at(q));
+                        a_diff = abs(data->at(q_max) - data->at(q));
 
-                        if(a1_diff >= a1_min_diff){
+                        if(a_diff >= a_min_diff){
                             is_max = true;
                         }
                     }
@@ -298,8 +322,8 @@ void SurfaceData::extremum_search(QList<double>* data, QList<int>* max_ind_list,
 
                     if(data->at(q_min) < data->at(q-dq)){
 
-                        a1_diff = abs(data->at(q_min) - data->at(q-dq));
-                        if(a1_diff >= a1_min_diff){
+                        a_diff = abs(data->at(q_min) - data->at(q-dq));
+                        if(a_diff >= a_min_diff){
                             is_min = true;
                         }
                     }
@@ -315,9 +339,9 @@ void SurfaceData::extremum_search(QList<double>* data, QList<int>* max_ind_list,
                     ++q;
 
                     if(data->at(q_min) < data->at(q)){
-                        a1_diff = abs(data->at(q_min) - data->at(q));
+                        a_diff = abs(data->at(q_min) - data->at(q));
 
-                        if(a1_diff >= a1_min_diff){
+                        if(a_diff >= a_min_diff){
                             is_min = true;
                         }
                     }
@@ -374,8 +398,6 @@ void SurfaceData::ReadFiltIter(){
         // Emit signal to update time and ampl values in UI
         emit LnReadingFinished(TimeList.rbegin()[0], Amp1List.rbegin()[0]);
 
-        //PhaseList.append(0);
-
         filterNewDatapoint(&Amp1List, &smthdAmp1List, &aValue);
         emit FilteringFinished(TimeList.rbegin()[0], smthdAmp1List.rbegin()[0]);
 
@@ -402,7 +424,7 @@ void SurfaceData::ReadFiltIter(){
             maxIsLast = false;
         }
 
-        dAcheck = abs(smthdAmp1List[newMaxInd]-smthdAmp1List[lastMinInd])/2;
+        dAcheck = abs(smthdAmp1List[newMaxInd]-smthdAmp1List[lastMinInd])/4;
 
         // -------------CALCULATE X AXIS SHIFT CAUSED BY ONE SIDED FILTERING-----------------------------------------------
 
@@ -427,8 +449,12 @@ void SurfaceData::ReadFiltIter(){
         // Calculate shift
         double shiftSum = 0;
         double diff;
+        if (MovAvgMaxIndList.size() < 3 || maxIndList.size() < 3) {
+            logStream << "no3PeaksForPR";
+            DBG_ERROR("Error: FIRE requires three maxima for starting phase recognition.");
+        }
         for (int l = 0; l < 3; l++){
-            diff = qFabs(smthdMovAvgList[MovAvgMaxIndList.rbegin()[l]] - smthdAmp1List[maxIndList.rbegin()[l]]);
+            diff = qFabs(TimeList[MovAvgMaxIndList.rbegin()[l]] - TimeList[maxIndList.rbegin()[l]]);
             shiftSum = shiftSum + diff;
         }
         filterShift = shiftSum / 3.0;
@@ -439,6 +465,7 @@ void SurfaceData::ReadFiltIter(){
 
         if (uiPtr->DebugModeRadioButton->isChecked()){
             disconnect(IterTimer, &QTimer::timeout, this, &SurfaceData::ReadFiltIter);
+            sizeBeforePR = TimeList.size();
             connect(IterTimer, &QTimer::timeout, this, &SurfaceData::ReadFiltPhaseDebugIter);
             ReadFiltPhaseDebugIter();
         }
@@ -451,6 +478,7 @@ void SurfaceData::ReadFiltIter(){
 }
 
 void SurfaceData::ReadFiltPhaseDebugIter(){
+
     if (!f.atEnd()){
         readOnly();
 
@@ -473,7 +501,7 @@ void SurfaceData::ReadFiltPhaseDebugIter(){
             T = abs(TimeList[newMaxInd] - TimeList[oldMaxInd]);
 
             // Valid amplitude interval around datapoint
-            dAcheck = abs(smthdAmp1List[newMaxInd]-smthdAmp1List[lastMinInd])/2;
+            dAcheck = abs(smthdAmp1List[newMaxInd]-smthdAmp1List[lastMinInd])/4;
 
             if (!checkBreathCycleDur(&T, &T_planning, &T_old, &phaseRecogActive)){
                 // Fallback for significant changes in duration of breathing cycle
@@ -495,12 +523,27 @@ void SurfaceData::ReadFiltPhaseDebugIter(){
 
         emit showCurrentPhase(&phase);
 
+        PhaseList.append(phase);
+
         //Write log file
         logStream << TimeList.rbegin()[0] << ";" << phase << "\n";
+
     }
 
     else{
         logFile.close();
+
+        //Create csv file with measured phase for each time value
+        for (int l = 0; l < sizeBeforePR; ++l) {
+                PhaseList.prepend(0);
+            }
+        if(!createOutputFile(&TimeList, &PhaseList)){
+            logStream << "Error in SurfaceData::run(). Writing csv file was not successful";
+        }
+        else{
+            qDebug() << "Writing csv file was successfull";
+        }
+
         IterTimer->stop();
     }
 }

@@ -206,6 +206,9 @@
             <property name="maximum">
              <number>410</number>
             </property>
+            <property name="value">
+             <number>205</number>
+            </property>
             <property name="sliderPosition">
              <number>205</number>
             </property>
@@ -500,7 +503,7 @@
       <x>19</x>
       <y>22</y>
       <width>591</width>
-      <height>741</height>
+      <height>721</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_43">
@@ -1367,7 +1370,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -1466,6 +1469,13 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
+          <widget class="QLabel" name="ReadLabel">
+           <property name="text">
+            <string>Real Time Data</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_7">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -1477,13 +1487,6 @@
             </size>
            </property>
           </spacer>
-         </item>
-         <item>
-          <widget class="QLabel" name="ReadLabel">
-           <property name="text">
-            <string>Real Time Data</string>
-           </property>
-          </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="DebugModeRadioButton">
@@ -1534,7 +1537,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -1614,7 +1617,6 @@
     </layout>
    </widget>
    <zorder>layoutWidget</zorder>
-   <zorder>layoutWidget</zorder>
    <zorder>label_Drr_2</zorder>
    <zorder>label_Xray_1</zorder>
    <zorder>label_Xray_2</zorder>
@@ -1622,22 +1624,6 @@
    <zorder>layoutWidget</zorder>
    <zorder>label_Drr_1</zorder>
    <zorder>layoutWidget</zorder>
-   <zorder>Load_label</zorder>
-   <zorder>horizontalSpacer_8</zorder>
-   <zorder>horizontalSpacer_8</zorder>
-   <zorder>Load_label</zorder>
-   <zorder>horizontalSpacer_8</zorder>
-   <zorder>Load_label</zorder>
-   <zorder>DebugModeRadioButton</zorder>
-   <zorder>ReadLabel</zorder>
-   <zorder>horizontalSpacer_7</zorder>
-   <zorder>phase_text</zorder>
-   <zorder>StartPhaseRecognitionButton</zorder>
-   <zorder>phaseLabel</zorder>
-   <zorder>phaseLabel</zorder>
-   <zorder>phase_text</zorder>
-   <zorder>StartPhaseRecognitionButton</zorder>
-   <zorder>horizontalSpacer_4</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
